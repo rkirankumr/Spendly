@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spendly | Neumorphic Expense Tracker</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <!-- Welcome Popup -->
+    <div id="welcome-popup"
+        style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(224, 230, 237, 0.6); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 9999; opacity: 0; pointer-events: none; transition: opacity 0.5s ease;">
+        <div class="neu-flat"
+            style="padding: 3rem 4rem; text-align: center; border-radius: var(--radius-lg); transform: translateY(30px); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; align-items: center;">
+            <div style="font-size: 3.5rem; margin-bottom: 1rem;">✨</div>
+            <h2 style="color: var(--accent-teal); font-size: 1.6rem; margin-bottom: 0.8rem; font-weight: 800;">Welcome to the world of Spendly</h2>
+            <div id="welcome-user-name" style="font-weight: 800; font-size: 2.2rem; color: var(--text-heading); margin-bottom: 0.5rem; letter-spacing: 1px;">Rojaa</div>
+            <p style="font-style: italic; color: var(--text-muted); font-size: 1.2rem; margin-top: 0.5rem;">"Spend Wisely"</p>
+        </div>
+    </div>
+
+    <div class="app-wrapper">
+
+        <!-- Side Navigation -->
+        <nav class="side-nav neu-flat" id="side-nav">
+            <button id="sidebar-toggle" class="neu-btn" title="Toggle Menu">◀</button>
+            <div class="logo">
+                <h2 id="logo-text">Spendly</h2>
+            </div>
+            <ul class="nav-links">
+                <li><button class="nav-btn active" data-tab="dashboard" title="Dashboard">📊 <span
+                            class="nav-text">Dashboard</span></button></li>
+                <li><button class="nav-btn" data-tab="expense" title="Expense">💸 <span
+                            class="nav-text">Expense</span></button></li>
+                <li><button class="nav-btn" data-tab="income" title="Income">💰 <span
+                            class="nav-text">Income</span></button></li>
+                <li><button class="nav-btn" data-tab="budget" title="Budget">🎯 <span
+                            class="nav-text">Budget</span></button></li>
+                <li><button class="nav-btn" data-tab="grocery" title="Things to Buy">🛒 <span
+                            class="nav-text">Things to Buy</span></button></li>
+                <li><button class="nav-btn" data-tab="analysis" title="Analysis">📈 <span
+                            class="nav-text">Analysis</span></button></li>
+                <li><button class="nav-btn" data-tab="settings" title="Settings">⚙️ <span
+                            class="nav-text">Settings</span></button></li>
+            </ul>
+        </nav>
+
+        <!-- Main Application Area -->
+        <div class="app-container">
+            <header>
+                <div class="header-left" style="display: flex; gap: 2rem; align-items: center;">
+                    <div>
+                        <h2 class="greeting" id="greeting-text">Hello!</h2>
+                        <p class="date-subtext" id="current-date-display">Today</p>
+                    </div>
+                    <div class="modern-clock neu-pressed"
+                        style="padding: 0.5rem 1.2rem; border-radius: var(--radius-md); display: flex; align-items: center; gap: 0.5rem; border: 1px solid rgba(255,255,255,0.2);">
+                        <div id="clock-time"
+                            style="font-size: 1.8rem; font-weight: 700; color: var(--accent-teal); letter-spacing: 1px; line-height: 1;">
+                            00:00</div>
+                        <div
+                            style="display: flex; flex-direction: column; justify-content: center; line-height: 1.1; margin-top: 2px;">
+                            <span id="clock-sec"
+                                style="font-size: 0.75rem; color: var(--text-heading); font-weight: 600;">00</span>
+                            <span id="clock-ampm"
+                                style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">AM</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="header-right" style="display: flex; gap: 0.5rem; flex-wrap: nowrap; justify-content: flex-end; align-items: stretch; overflow-x: auto; padding-bottom: 5px;">
+                    <div class="total-balance neu-pressed" style="display: flex; flex-direction: column; align-items: flex-start; padding: 0.4rem 0.8rem; flex-shrink: 0;">
+                        <span style="font-size: 0.75rem; color: var(--text-muted); white-space: nowrap;">Leftover</span>
+                        <strong id="previous-leftover" style="color: var(--text-heading); font-size: 1rem;">₹0.00</strong>
+                    </div>
+                    <div class="total-balance neu-pressed" style="display: flex; flex-direction: column; align-items: flex-start; padding: 0.4rem 0.8rem; flex-shrink: 0;">
+                        <span style="font-size: 0.75rem; color: var(--text-muted); white-space: nowrap;">Fixed Limit</span>
+                        <strong id="monthly-fixed-limit" style="color: var(--accent-teal); font-size: 1rem;">₹0.00</strong>
+                    </div>
+                    <div class="total-balance neu-pressed" style="display: flex; flex-direction: column; align-items: flex-start; padding: 0.4rem 0.8rem; flex-shrink: 0;">
+                        <span style="font-size: 0.75rem; color: var(--text-muted); white-space: nowrap;">Total Budget</span>
+                        <strong id="total-effective-budget" style="color: var(--accent-green); font-size: 1rem;">₹0.00</strong>
+                    </div>
+                    <div class="total-balance neu-pressed" style="display: flex; flex-direction: column; align-items: flex-start; padding: 0.4rem 0.8rem; flex-shrink: 0;">
+                        <span style="font-size: 0.75rem; color: var(--text-muted); white-space: nowrap;">Est. Savings</span>
+                        <strong id="est-savings" style="color: var(--accent-green); font-size: 1rem;">₹0.00</strong>
+                    </div>
+                    <div class="total-balance neu-pressed" style="display: flex; flex-direction: column; align-items: flex-start; padding: 0.4rem 0.8rem; flex-shrink: 0;">
+                        <span id="balance-label" style="font-size: 0.75rem; color: var(--text-muted); white-space: nowrap;">Remaining Budget</span>
+                        <strong id="net-balance" style="color: var(--text-heading); font-size: 1rem;">₹0.00</strong>
+                    </div>
+                </div>
+            </header>
+
+            <!-- TABS -->
+
+            <!-- 1. DASHBOARD TAB -->
+            <div id="tab-dashboard" class="tab-content active" style="flex-direction: column; height: 100%;">
+                
+                <div id="dashboard-alert-container" style="display: none; background: rgba(255, 69, 58, 0.1); border-left: 4px solid var(--accent-red); padding: 1rem; margin-bottom: 1rem; border-radius: var(--radius-sm);">
+                    <div style="display: flex; align-items: center; gap: 0.8rem;">
+                        <span style="font-size: 1.5rem;">⚠️</span>
+                        <div style="flex: 1;">
+                            <strong style="color: var(--accent-red); font-size: 0.95rem; display: block;">Reminder: End of Month Approaching!</strong>
+                            <span style="color: var(--text-main); font-size: 0.85rem;" id="dashboard-alert-text">You have pending items in your "Things to Buy" list.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="overview-card neu-flat" style="margin-bottom: 1rem; padding: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+                    <h3 style="color: var(--text-heading); font-size: 1.2rem;">Overview</h3>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <select id="dash-month-select" class="neu-pressed"
+                            style="padding: 0.4rem 2rem 0.4rem 0.8rem; background-position: right 0.5rem top 50%; border: none; outline: none; border-radius: var(--radius-sm); font-size: 0.85rem; color: var(--text-heading); width: auto;">
+                            <option value="0">January</option>
+                            <option value="1">February</option>
+                            <option value="2">March</option>
+                            <option value="3">April</option>
+                            <option value="4">May</option>
+                            <option value="5">June</option>
+                            <option value="6">July</option>
+                            <option value="7">August</option>
+                            <option value="8">September</option>
+                            <option value="9">October</option>
+                            <option value="10">November</option>
+                            <option value="11">December</option>
+                        </select>
+                        <select id="dash-year-select" class="neu-pressed"
+                            style="padding: 0.4rem 2rem 0.4rem 0.8rem; background-position: right 0.5rem top 50%; border: none; outline: none; border-radius: var(--radius-sm); font-size: 0.85rem; color: var(--text-heading); width: auto;">
+                        </select>
+                    </div>
+                </div>
+
+                <div id="monthly-insights" class="neu-flat" style="margin-bottom: 1rem; padding: 0.8rem 1.5rem; display: flex; justify-content: space-around; align-items: center;">
+                    <div class="insight-item" style="text-align: center;">
+                        <span style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 0.2rem;">Daily Average</span>
+                        <strong id="daily-avg" style="font-size: 1rem; color: var(--text-heading);">₹0.00</strong>
+                    </div>
+                    <div class="insight-item" style="text-align: center; border-left: 2px dashed rgba(163,177,198, 0.2); border-right: 2px dashed rgba(163,177,198, 0.2); padding: 0 1.5rem;">
+                        <span style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 0.2rem;">Top Spending</span>
+                        <strong id="top-expense-cat" style="font-size: 1rem; color: var(--accent-red);">None</strong>
+                    </div>
+                    <div class="insight-item" style="text-align: center;">
+                        <span style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 0.2rem;">Budget Utilization</span>
+                        <strong id="budget-utilization" style="font-size: 1rem; color: var(--accent-teal);">0%</strong>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid" style="gap: 1rem; flex: 1; min-height: 0;">
+                    <section class="overview-card neu-flat" style="padding: 1rem; display: flex; flex-direction: column; overflow: hidden; height: 100%;">
+                        <h3 style="margin-bottom: 0.5rem; text-align: center; font-size: 1rem;">Spending Limit</h3>
+                        <div class="chart-container" style="flex: 1; position: relative; display: flex; align-items: center; justify-content: center; min-height: 0; padding: 5px;">
+                            <canvas id="dashboardChart" style="position: relative; z-index: 5;"></canvas>
+                            <div class="chart-inner-circle neu-pressed" id="chart-center-text" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 60%; aspect-ratio: 1; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; pointer-events: none; z-index: 1;">
+                            </div>
+                        </div>
+                        <div class="summary-stats" style="margin-top: 0.5rem; padding: 0.5rem; margin-bottom: 0;">
+                            <div class="stat income"><span id="dash-income" style="font-size: 1rem;">₹0.00</span></div>
+                            <div class="stat expense"><span id="dash-expense" style="font-size: 1rem;">₹0.00</span></div>
+                        </div>
+                    </section>
+
+                    <section class="reports-card neu-flat" style="padding: 1rem; display: flex; flex-direction: column; overflow: hidden; height: 100%;">
+                        <h3 style="margin-bottom: 0.5rem; text-align: center; font-size: 1rem;">Expense Breakdown</h3>
+                        <div style="flex: 1; position: relative; width: 100%; min-height: 0;">
+                            <canvas id="reportsChart"></canvas>
+                        </div>
+                        <div id="reports-legend" style="margin-top: 0.5rem; display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; font-size: 0.8rem;"></div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- 2. EXPENSE TAB -->
+            <div id="tab-expense" class="tab-content">
+                <div class="split-layout">
+                    <div class="add-card neu-flat">
+                        <h3>Add Expense</h3>
+                        <form id="expense-form">
+                            <div class="form-group">
+                                <label>Date</label>
+                                <input type="date" id="exp-date" class="neu-pressed" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Category</label>
+                                <select id="exp-category" class="neu-pressed" required>
+                                    <!-- Injected -->
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Description</label>
+                                <input type="text" id="exp-note" class="neu-pressed" placeholder="Optional">
+                            </div>
+                            <div class="form-group">
+                                <label>Amount (₹)</label>
+                                <input type="number" id="exp-amount" class="neu-pressed" required step="0.01">
+                            </div>
+                            <button type="submit" class="neu-btn primary submit-btn">Add Expense</button>
+                        </form>
+                    </div>
+                    <div class="list-card neu-flat">
+                        <h3>Expense History</h3>
+                        <div class="transaction-list" id="expense-list"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. INCOME TAB -->
+            <div id="tab-income" class="tab-content">
+                <div class="split-layout">
+                    <div class="add-card neu-flat">
+                        <h3>Add Income</h3>
+                        <form id="income-form">
+                            <div class="form-group">
+                                <label>Date</label>
+                                <input type="date" id="inc-date" class="neu-pressed" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Source</label>
+                                <input type="text" id="inc-source" class="neu-pressed" placeholder="e.g. Salary, Bonus"
+                                    required>
+                            </div>
+                            <div class="form-group">
+                                <label>Amount (₹)</label>
+                                <input type="number" id="inc-amount" class="neu-pressed" required step="0.01">
+                            </div>
+                            <button type="submit" class="neu-btn primary submit-btn"
+                                style="color: var(--accent-green);">Add Income</button>
+                        </form>
+                    </div>
+                    <div class="list-card neu-flat">
+                        <h3>Income History</h3>
+                        <div class="transaction-list" id="income-list"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. BUDGET TAB -->
+            <div id="tab-budget" class="tab-content">
+                <div class="split-layout">
+                    <div class="add-card neu-flat">
+                        <h3>Set Category Budget</h3>
+                        <form id="category-budget-form">
+                            <div class="form-group">
+                                <label>Category</label>
+                                <select id="budget-category" class="neu-pressed" required>
+                                    <!-- Injected -->
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Monthly Limit (₹)</label>
+                                <input type="number" id="cat-budget-amount" class="neu-pressed" placeholder="0.00"
+                                    required step="0.01">
+                            </div>
+                            <button type="submit" class="neu-btn primary submit-btn">Save Budget</button>
+                        </form>
+                    </div>
+
+                    <div class="list-card neu-flat">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                            <h3>Category Budgets</h3>
+                            <div style="font-size: 0.9rem; color: var(--text-muted);">
+                                Total Budget: <strong id="total-budget-sum"
+                                    style="color: var(--text-heading); font-size: 1.1rem;">₹0.00</strong>
+                            </div>
+                        </div>
+                        <div class="transaction-list" id="category-budget-list">
+                            <!-- Injected per category -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. GROCERY LIST TAB -->
+            <div id="tab-grocery" class="tab-content" style="flex-direction: column; height: 100%;">
+                <div class="split-layout" style="grid-template-columns: 1fr 1.8fr; flex: 1; min-height: 0;">
+                    <div class="add-card neu-flat">
+                        <h3 id="grocery-form-title" style="margin-bottom: 1.5rem;">New Thing to Buy</h3>
+                        <form id="grocery-form">
+                            <input type="hidden" id="edit-grocery-id">
+                            <div class="form-group">
+                                <label>Item Name</label>
+                                <input type="text" id="grocery-item-name" class="neu-pressed" placeholder="e.g. Rice, Milk" required>
+                            </div>
+                            <div style="display: flex; gap: 1rem;">
+                                <div class="form-group" style="flex: 1;">
+                                    <label>Quantity</label>
+                                    <input type="number" id="grocery-qty" class="neu-pressed" placeholder="1" step="0.01" required>
+                                </div>
+                                <div class="form-group" style="flex: 1;">
+                                    <label>UOM (Unit)</label>
+                                    <select id="grocery-uom" class="neu-pressed">
+                                        <option value="kg">kg</option>
+                                        <option value="gram">gram</option>
+                                        <option value="litre">litre</option>
+                                        <option value="ml">ml</option>
+                                        <option value="packet">packet</option>
+                                        <option value="nos">nos</option>
+                                        <option value="dozen">dozen</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 1rem;">
+                                <div class="form-group" style="flex: 1;">
+                                    <label>Expected Rate (₹)</label>
+                                    <input type="number" id="grocery-expected" class="neu-pressed" placeholder="0" required>
+                                </div>
+                                <div class="form-group" style="flex: 1;">
+                                    <label>Actual Rate (₹)</label>
+                                    <input type="number" id="grocery-actual" class="neu-pressed" placeholder="0">
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 1rem;">
+                                <div class="form-group" style="flex: 1;">
+                                    <label>Target Month</label>
+                                    <select id="grocery-month" class="neu-pressed">
+                                        <option value="0">January</option>
+                                        <option value="1">February</option>
+                                        <option value="2">March</option>
+                                        <option value="3">April</option>
+                                        <option value="4">May</option>
+                                        <option value="5">June</option>
+                                        <option value="6">July</option>
+                                        <option value="7">August</option>
+                                        <option value="8">September</option>
+                                        <option value="9">October</option>
+                                        <option value="10">November</option>
+                                        <option value="11">December</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" style="flex: 1;">
+                                    <label>Target Year</label>
+                                    <select id="grocery-year" class="neu-pressed">
+                                    </select>
+                                </div>
+                            </div>
+                            <button type="submit" id="grocery-submit-btn" class="neu-btn primary submit-btn">Add to List</button>
+                            <button type="button" id="grocery-cancel-btn" class="neu-btn submit-btn" style="display: none; color: var(--accent-red);">Cancel Edit</button>
+                        </form>
+                    </div>
+
+                    <div class="list-card neu-flat">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                            <h3>My List</h3>
+                            <div id="grocery-summary" style="display: flex; gap: 1rem; font-size: 0.85rem;">
+                                <div class="neu-pressed" style="padding: 0.5rem 1rem; border-radius: var(--radius-sm);">
+                                    Exp: <strong id="total-grocery-exp">₹0</strong>
+                                </div>
+                                <div class="neu-pressed" style="padding: 0.5rem 1rem; border-radius: var(--radius-sm);">
+                                    Act: <strong id="total-grocery-act">₹0</strong>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="grocery-list" class="transaction-list" style="max-height: calc(100vh - 350px);">
+                            <!-- Grocery items will appear here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. ANALYSIS TAB -->
+            <div id="tab-analysis" class="tab-content" style="flex-direction: column; height: 100%; overflow-y: auto;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                    <h2 style="color: var(--text-heading);">Financial Analysis</h2>
+                </div>
+                
+                <div class="split-layout" style="grid-template-columns: 2fr 1fr; gap: 2rem;">
+                    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                        <!-- Trend Chart -->
+                        <div class="neu-flat" style="padding: 1.5rem; border-radius: var(--radius-md);">
+                            <h3 style="margin-bottom: 1rem; color: var(--text-heading);">6-Month Trend (Income vs Expense)</h3>
+                            <div style="position: relative; height: 250px; width: 100%;">
+                                <canvas id="analysis-trend-chart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Top Spending Categories -->
+                        <div class="neu-flat" style="padding: 1.5rem; border-radius: var(--radius-md);">
+                            <h3 style="margin-bottom: 1rem; color: var(--text-heading);">Top Spending Categories (All-Time)</h3>
+                            <div id="analysis-top-categories" style="display: flex; flex-direction: column; gap: 0.8rem;">
+                                <!-- Injected via JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+                        <!-- Month Over Month Insights -->
+                        <div class="neu-flat" style="padding: 1.5rem; border-radius: var(--radius-md);">
+                            <h3 style="margin-bottom: 1rem; color: var(--text-heading);">Month-over-Month Insights</h3>
+                            <div id="analysis-mom-insights" style="display: flex; flex-direction: column; gap: 1rem; font-size: 0.95rem;">
+                                <!-- Injected via JS -->
+                            </div>
+                        </div>
+
+                        <!-- Savings Rate -->
+                        <div class="neu-flat" style="padding: 1.5rem; border-radius: var(--radius-md);">
+                            <h3 style="margin-bottom: 1rem; color: var(--text-heading);">Avg Savings Rate</h3>
+                            <div style="text-align: center; margin-top: 1rem;">
+                                <div id="analysis-savings-rate-circle" class="neu-pressed" style="width: 120px; height: 120px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                                    <h2 id="analysis-savings-percent" style="color: var(--text-heading); margin: 0;">0%</h2>
+                                </div>
+                                <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 1rem;">Target: 20%</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. SETTINGS TAB -->
+            <div id="tab-settings" class="tab-content">
+                <div class="settings-card neu-flat" style="max-width: 500px;">
+                    <h3>Settings</h3>
+
+                    <div class="form-group" style="margin-top: 2rem;">
+                        <label>Your Name</label>
+                        <div style="display: flex; gap: 1rem;">
+                            <input type="text" id="user-name-input" class="neu-pressed" value="Rojaa">
+                            <button id="save-name-btn" class="neu-btn primary" style="padding: 0 1.5rem;">Save</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group"
+                        style="margin-top: 2rem; padding-top: 2rem; border-top: 2px dashed rgba(163,177,198, 0.3);">
+                        <label>Initial Starting Balance (Leftover prior to using app)</label>
+                        <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
+                            <span class="neu-pressed"
+                                style="padding: 0.8rem; border-radius: var(--radius-sm); color: var(--text-muted); display: flex; align-items: center;">₹</span>
+                            <input type="number" id="starting-balance-input" class="neu-pressed" style="flex: 1;"
+                                placeholder="0" step="0.01">
+                            <button id="save-balance-btn" class="neu-btn primary"
+                                style="padding: 0 1.5rem;">Save</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group"
+                        style="margin-top: 2rem; padding-top: 2rem; border-top: 2px dashed rgba(163,177,198, 0.3);">
+                        <label>Add Custom Expense Category</label>
+                        <form id="add-category-form" style="display: flex; gap: 1rem; margin-top: 0.5rem;">
+                            <input type="text" id="new-cat-emoji" class="neu-pressed" placeholder="Icon (e.g. 🍕)"
+                                style="width: 100px;" required>
+                            <input type="text" id="new-cat-name" class="neu-pressed" placeholder="Category Name"
+                                style="flex: 1;" required>
+                            <button type="submit" class="neu-btn primary" style="padding: 0 1.5rem;">Add</button>
+                        </form>
+                    </div>
+
+                    <div style="margin-top: 3rem; padding-top: 2rem; border-top: 2px dashed rgba(163,177,198, 0.3);">
+                        <h4 style="margin-bottom: 1rem; color: var(--text-heading);">Data Backup & Restore</h4>
+                        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">Export your data to keep it safe, or import a previous backup.</p>
+                        <div style="display: flex; gap: 1rem;">
+                            <button id="export-btn" class="neu-btn primary" style="flex: 1; padding: 1rem;">📥 Export Backup</button>
+                            <button id="import-btn-trigger" class="neu-btn" style="flex: 1; padding: 1rem;">📤 Import Backup</button>
+                            <input type="file" id="import-file" accept=".json" style="display: none;">
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 3rem; padding-top: 2rem; border-top: 2px dashed rgba(163,177,198, 0.3);">
+                        <h4 style="color: var(--accent-red); margin-bottom: 1rem;">Danger Zone</h4>
+                        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">This will
+                            permanently delete all your tracking data.</p>
+                        <button id="clear-data" class="neu-btn"
+                            style="color: var(--accent-red); width: 100%; padding: 1rem;">Clear All Data</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+
+</html>
