@@ -19,9 +19,13 @@
         <div class="neu-flat"
             style="padding: 3rem 4rem; text-align: center; border-radius: var(--radius-lg); transform: translateY(30px); transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; align-items: center;">
             <div style="font-size: 3.5rem; margin-bottom: 1rem;">✨</div>
-            <h2 style="color: var(--accent-teal); font-size: 1.6rem; margin-bottom: 0.8rem; font-weight: 800;">Welcome to the world of Spendly</h2>
-            <div id="welcome-user-name" style="font-weight: 800; font-size: 2.2rem; color: var(--text-heading); margin-bottom: 0.5rem; letter-spacing: 1px;">Rojaa</div>
-            <p style="font-style: italic; color: var(--text-muted); font-size: 1.2rem; margin-top: 0.5rem;">"Spend Wisely"</p>
+            <h2 style="color: var(--accent-teal); font-size: 1.6rem; margin-bottom: 0.8rem; font-weight: 800;">Welcome
+                to the world of Spendly</h2>
+            <div id="welcome-user-name"
+                style="font-weight: 800; font-size: 2.2rem; color: var(--text-heading); margin-bottom: 0.5rem; letter-spacing: 1px;">
+                Rojaa</div>
+            <p style="font-style: italic; color: var(--text-muted); font-size: 1.2rem; margin-top: 0.5rem;">"Spend
+                Wisely"</p>
         </div>
     </div>
 
@@ -42,10 +46,14 @@
                             class="nav-text">Income</span></button></li>
                 <li><button class="nav-btn" data-tab="budget" title="Budget">🎯 <span
                             class="nav-text">Budget</span></button></li>
-                <li><button class="nav-btn" data-tab="grocery" title="Things to Buy">🛒 <span
-                            class="nav-text">Things to Buy</span></button></li>
+                <li><button class="nav-btn" data-tab="grocery" title="Things to Buy">🛒 <span class="nav-text">Things to
+                            Buy</span></button></li>
+                <li><button class="nav-btn" data-tab="milk" title="Milk Tracker">🥛 <span class="nav-text">Milk
+                            Tracker</span></button></li>
                 <li><button class="nav-btn" data-tab="analysis" title="Analysis">📈 <span
                             class="nav-text">Analysis</span></button></li>
+                <li><button class="nav-btn" data-tab="report" title="Report">📋 <span
+                            class="nav-text">Report</span></button></li>
                 <li><button class="nav-btn" data-tab="settings" title="Settings">⚙️ <span
                             class="nav-text">Settings</span></button></li>
             </ul>
@@ -73,25 +81,39 @@
                         </div>
                     </div>
                 </div>
-                <div class="header-right" style="display: flex; gap: 0.5rem; flex-wrap: nowrap; justify-content: flex-end; align-items: stretch; overflow-x: auto; padding-bottom: 5px;">
-                    <div class="total-balance neu-pressed" style="display: flex; flex-direction: column; align-items: flex-start; padding: 0.4rem 0.8rem; flex-shrink: 0;">
+                <div class="header-right"
+                    style="display: flex; gap: 0.5rem; flex-wrap: nowrap; justify-content: flex-end; align-items: stretch; overflow-x: auto; padding-bottom: 5px;">
+                    <div class="total-balance neu-pressed"
+                        style="display: flex; flex-direction: column; align-items: flex-start; padding: 0.4rem 0.8rem; flex-shrink: 0;">
                         <span style="font-size: 0.75rem; color: var(--text-muted); white-space: nowrap;">Leftover</span>
-                        <strong id="previous-leftover" style="color: var(--text-heading); font-size: 1rem;">₹0.00</strong>
+                        <strong id="previous-leftover"
+                            style="color: var(--text-heading); font-size: 1rem;">₹0.00</strong>
                     </div>
-                    <div class="total-balance neu-pressed" style="display: flex; flex-direction: column; align-items: flex-start; padding: 0.4rem 0.8rem; flex-shrink: 0;">
-                        <span style="font-size: 0.75rem; color: var(--text-muted); white-space: nowrap;">Fixed Limit</span>
-                        <strong id="monthly-fixed-limit" style="color: var(--accent-teal); font-size: 1rem;">₹0.00</strong>
+                    <div class="total-balance neu-pressed"
+                        style="display: flex; flex-direction: column; align-items: flex-start; padding: 0.4rem 0.8rem; flex-shrink: 0;">
+                        <span style="font-size: 0.75rem; color: var(--text-muted); white-space: nowrap;">Fixed
+                            Limit</span>
+                        <strong id="monthly-fixed-limit"
+                            style="color: var(--accent-teal); font-size: 1rem;">₹0.00</strong>
                     </div>
-                    <div class="total-balance neu-pressed" style="display: flex; flex-direction: column; align-items: flex-start; padding: 0.4rem 0.8rem; flex-shrink: 0;">
-                        <span style="font-size: 0.75rem; color: var(--text-muted); white-space: nowrap;">Total Budget</span>
-                        <strong id="total-effective-budget" style="color: var(--accent-green); font-size: 1rem;">₹0.00</strong>
+                    <div class="total-balance neu-pressed"
+                        style="display: flex; flex-direction: column; align-items: flex-start; padding: 0.4rem 0.8rem; flex-shrink: 0;">
+                        <span style="font-size: 0.75rem; color: var(--text-muted); white-space: nowrap;">Total
+                            Budget</span>
+                        <strong id="total-effective-budget"
+                            style="color: var(--accent-green); font-size: 1rem;">₹0.00</strong>
                     </div>
-                    <div class="total-balance neu-pressed" style="display: flex; flex-direction: column; align-items: flex-start; padding: 0.4rem 0.8rem; flex-shrink: 0;">
-                        <span style="font-size: 0.75rem; color: var(--text-muted); white-space: nowrap;">Est. Savings</span>
+                    <div class="total-balance neu-pressed"
+                        style="display: flex; flex-direction: column; align-items: flex-start; padding: 0.4rem 0.8rem; flex-shrink: 0;">
+                        <span style="font-size: 0.75rem; color: var(--text-muted); white-space: nowrap;">Est.
+                            Savings</span>
                         <strong id="est-savings" style="color: var(--accent-green); font-size: 1rem;">₹0.00</strong>
                     </div>
-                    <div class="total-balance neu-pressed" style="display: flex; flex-direction: column; align-items: flex-start; padding: 0.4rem 0.8rem; flex-shrink: 0;">
-                        <span id="balance-label" style="font-size: 0.75rem; color: var(--text-muted); white-space: nowrap;">Remaining Budget</span>
+                    <div class="total-balance neu-pressed"
+                        style="display: flex; flex-direction: column; align-items: flex-start; padding: 0.4rem 0.8rem; flex-shrink: 0;">
+                        <span id="balance-label"
+                            style="font-size: 0.75rem; color: var(--text-muted); white-space: nowrap;">Remaining
+                            Budget</span>
                         <strong id="net-balance" style="color: var(--text-heading); font-size: 1rem;">₹0.00</strong>
                     </div>
                 </div>
@@ -101,18 +123,22 @@
 
             <!-- 1. DASHBOARD TAB -->
             <div id="tab-dashboard" class="tab-content active" style="flex-direction: column; height: 100%;">
-                
-                <div id="dashboard-alert-container" style="display: none; background: rgba(255, 69, 58, 0.1); border-left: 4px solid var(--accent-red); padding: 1rem; margin-bottom: 1rem; border-radius: var(--radius-sm);">
+
+                <div id="dashboard-alert-container"
+                    style="display: none; background: rgba(255, 69, 58, 0.1); border-left: 4px solid var(--accent-red); padding: 1rem; margin-bottom: 1rem; border-radius: var(--radius-sm);">
                     <div style="display: flex; align-items: center; gap: 0.8rem;">
                         <span style="font-size: 1.5rem;">⚠️</span>
                         <div style="flex: 1;">
-                            <strong style="color: var(--accent-red); font-size: 0.95rem; display: block;">Reminder: End of Month Approaching!</strong>
-                            <span style="color: var(--text-main); font-size: 0.85rem;" id="dashboard-alert-text">You have pending items in your "Things to Buy" list.</span>
+                            <strong style="color: var(--accent-red); font-size: 0.95rem; display: block;">Reminder: End
+                                of Month Approaching!</strong>
+                            <span style="color: var(--text-main); font-size: 0.85rem;" id="dashboard-alert-text">You
+                                have pending items in your "Things to Buy" list.</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="overview-card neu-flat" style="margin-bottom: 1rem; padding: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+                <div class="overview-card neu-flat"
+                    style="margin-bottom: 1rem; padding: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
                     <h3 style="color: var(--text-heading); font-size: 1.2rem;">Overview</h3>
                     <div style="display: flex; gap: 0.5rem;">
                         <select id="dash-month-select" class="neu-pressed"
@@ -136,41 +162,56 @@
                     </div>
                 </div>
 
-                <div id="monthly-insights" class="neu-flat" style="margin-bottom: 1rem; padding: 0.8rem 1.5rem; display: flex; justify-content: space-around; align-items: center;">
+                <div id="monthly-insights" class="neu-flat"
+                    style="margin-bottom: 1rem; padding: 0.8rem 1.5rem; display: flex; justify-content: space-around; align-items: center;">
                     <div class="insight-item" style="text-align: center;">
-                        <span style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 0.2rem;">Daily Average</span>
+                        <span
+                            style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 0.2rem;">Daily
+                            Average</span>
                         <strong id="daily-avg" style="font-size: 1rem; color: var(--text-heading);">₹0.00</strong>
                     </div>
-                    <div class="insight-item" style="text-align: center; border-left: 2px dashed rgba(163,177,198, 0.2); border-right: 2px dashed rgba(163,177,198, 0.2); padding: 0 1.5rem;">
-                        <span style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 0.2rem;">Top Spending</span>
+                    <div class="insight-item"
+                        style="text-align: center; border-left: 2px dashed rgba(163,177,198, 0.2); border-right: 2px dashed rgba(163,177,198, 0.2); padding: 0 1.5rem;">
+                        <span
+                            style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 0.2rem;">Top
+                            Spending</span>
                         <strong id="top-expense-cat" style="font-size: 1rem; color: var(--accent-red);">None</strong>
                     </div>
                     <div class="insight-item" style="text-align: center;">
-                        <span style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 0.2rem;">Budget Utilization</span>
+                        <span
+                            style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 0.2rem;">Budget
+                            Utilization</span>
                         <strong id="budget-utilization" style="font-size: 1rem; color: var(--accent-teal);">0%</strong>
                     </div>
                 </div>
 
                 <div class="dashboard-grid" style="gap: 1rem; flex: 1; min-height: 0;">
-                    <section class="overview-card neu-flat" style="padding: 1rem; display: flex; flex-direction: column; overflow: hidden; height: 100%;">
+                    <section class="overview-card neu-flat"
+                        style="padding: 1rem; display: flex; flex-direction: column; overflow: hidden; height: 100%;">
                         <h3 style="margin-bottom: 0.5rem; text-align: center; font-size: 1rem;">Spending Limit</h3>
-                        <div class="chart-container" style="flex: 1; position: relative; display: flex; align-items: center; justify-content: center; min-height: 0; padding: 5px;">
+                        <div class="chart-container"
+                            style="flex: 1; position: relative; display: flex; align-items: center; justify-content: center; min-height: 0; padding: 5px;">
                             <canvas id="dashboardChart" style="position: relative; z-index: 5;"></canvas>
-                            <div class="chart-inner-circle neu-pressed" id="chart-center-text" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 60%; aspect-ratio: 1; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; pointer-events: none; z-index: 1;">
+                            <div class="chart-inner-circle neu-pressed" id="chart-center-text"
+                                style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 60%; aspect-ratio: 1; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; pointer-events: none; z-index: 1;">
                             </div>
                         </div>
                         <div class="summary-stats" style="margin-top: 0.5rem; padding: 0.5rem; margin-bottom: 0;">
                             <div class="stat income"><span id="dash-income" style="font-size: 1rem;">₹0.00</span></div>
-                            <div class="stat expense"><span id="dash-expense" style="font-size: 1rem;">₹0.00</span></div>
+                            <div class="stat expense"><span id="dash-expense" style="font-size: 1rem;">₹0.00</span>
+                            </div>
                         </div>
                     </section>
 
-                    <section class="reports-card neu-flat" style="padding: 1rem; display: flex; flex-direction: column; overflow: hidden; height: 100%;">
+                    <section class="reports-card neu-flat"
+                        style="padding: 1rem; display: flex; flex-direction: column; overflow: hidden; height: 100%;">
                         <h3 style="margin-bottom: 0.5rem; text-align: center; font-size: 1rem;">Expense Breakdown</h3>
                         <div style="flex: 1; position: relative; width: 100%; min-height: 0;">
                             <canvas id="reportsChart"></canvas>
                         </div>
-                        <div id="reports-legend" style="margin-top: 0.5rem; display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; font-size: 0.8rem;"></div>
+                        <div id="reports-legend"
+                            style="margin-top: 0.5rem; display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; font-size: 0.8rem;">
+                        </div>
                     </section>
                 </div>
             </div>
@@ -285,12 +326,14 @@
                             <input type="hidden" id="edit-grocery-id">
                             <div class="form-group">
                                 <label>Item Name</label>
-                                <input type="text" id="grocery-item-name" class="neu-pressed" placeholder="e.g. Rice, Milk" required>
+                                <input type="text" id="grocery-item-name" class="neu-pressed"
+                                    placeholder="e.g. Rice, Milk" required>
                             </div>
                             <div style="display: flex; gap: 1rem;">
                                 <div class="form-group" style="flex: 1;">
                                     <label>Quantity</label>
-                                    <input type="number" id="grocery-qty" class="neu-pressed" placeholder="1" step="0.01" required>
+                                    <input type="number" id="grocery-qty" class="neu-pressed" placeholder="1"
+                                        step="0.01" required>
                                 </div>
                                 <div class="form-group" style="flex: 1;">
                                     <label>UOM (Unit)</label>
@@ -308,7 +351,8 @@
                             <div style="display: flex; gap: 1rem;">
                                 <div class="form-group" style="flex: 1;">
                                     <label>Expected Rate (₹)</label>
-                                    <input type="number" id="grocery-expected" class="neu-pressed" placeholder="0" required>
+                                    <input type="number" id="grocery-expected" class="neu-pressed" placeholder="0"
+                                        required>
                                 </div>
                                 <div class="form-group" style="flex: 1;">
                                     <label>Actual Rate (₹)</label>
@@ -339,13 +383,16 @@
                                     </select>
                                 </div>
                             </div>
-                            <button type="submit" id="grocery-submit-btn" class="neu-btn primary submit-btn">Add to List</button>
-                            <button type="button" id="grocery-cancel-btn" class="neu-btn submit-btn" style="display: none; color: var(--accent-red);">Cancel Edit</button>
+                            <button type="submit" id="grocery-submit-btn" class="neu-btn primary submit-btn">Add to
+                                List</button>
+                            <button type="button" id="grocery-cancel-btn" class="neu-btn submit-btn"
+                                style="display: none; color: var(--accent-red);">Cancel Edit</button>
                         </form>
                     </div>
 
                     <div class="list-card neu-flat">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
                             <h3>My List</h3>
                             <div id="grocery-summary" style="display: flex; gap: 1rem; font-size: 0.85rem;">
                                 <div class="neu-pressed" style="padding: 0.5rem 1rem; border-radius: var(--radius-sm);">
@@ -356,7 +403,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div id="grocery-list" class="transaction-list" style="max-height: calc(100vh - 350px);">
                             <!-- Grocery items will appear here -->
                         </div>
@@ -369,12 +416,13 @@
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
                     <h2 style="color: var(--text-heading);">Financial Analysis</h2>
                 </div>
-                
+
                 <div class="split-layout" style="grid-template-columns: 2fr 1fr; gap: 2rem;">
                     <div style="display: flex; flex-direction: column; gap: 1.5rem;">
                         <!-- Trend Chart -->
                         <div class="neu-flat" style="padding: 1.5rem; border-radius: var(--radius-md);">
-                            <h3 style="margin-bottom: 1rem; color: var(--text-heading);">6-Month Trend (Income vs Expense)</h3>
+                            <h3 style="margin-bottom: 1rem; color: var(--text-heading);">6-Month Trend (Income vs
+                                Expense)</h3>
                             <div style="position: relative; height: 250px; width: 100%;">
                                 <canvas id="analysis-trend-chart"></canvas>
                             </div>
@@ -382,8 +430,10 @@
 
                         <!-- Top Spending Categories -->
                         <div class="neu-flat" style="padding: 1.5rem; border-radius: var(--radius-md);">
-                            <h3 style="margin-bottom: 1rem; color: var(--text-heading);">Top Spending Categories (All-Time)</h3>
-                            <div id="analysis-top-categories" style="display: flex; flex-direction: column; gap: 0.8rem;">
+                            <h3 style="margin-bottom: 1rem; color: var(--text-heading);">Top Spending Categories
+                                (All-Time)</h3>
+                            <div id="analysis-top-categories"
+                                style="display: flex; flex-direction: column; gap: 0.8rem;">
                                 <!-- Injected via JS -->
                             </div>
                         </div>
@@ -393,7 +443,8 @@
                         <!-- Month Over Month Insights -->
                         <div class="neu-flat" style="padding: 1.5rem; border-radius: var(--radius-md);">
                             <h3 style="margin-bottom: 1rem; color: var(--text-heading);">Month-over-Month Insights</h3>
-                            <div id="analysis-mom-insights" style="display: flex; flex-direction: column; gap: 1rem; font-size: 0.95rem;">
+                            <div id="analysis-mom-insights"
+                                style="display: flex; flex-direction: column; gap: 1rem; font-size: 0.95rem;">
                                 <!-- Injected via JS -->
                             </div>
                         </div>
@@ -402,76 +453,405 @@
                         <div class="neu-flat" style="padding: 1.5rem; border-radius: var(--radius-md);">
                             <h3 style="margin-bottom: 1rem; color: var(--text-heading);">Avg Savings Rate</h3>
                             <div style="text-align: center; margin-top: 1rem;">
-                                <div id="analysis-savings-rate-circle" class="neu-pressed" style="width: 120px; height: 120px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
-                                    <h2 id="analysis-savings-percent" style="color: var(--text-heading); margin: 0;">0%</h2>
+                                <div id="analysis-savings-rate-circle" class="neu-pressed"
+                                    style="width: 120px; height: 120px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+                                    <h2 id="analysis-savings-percent" style="color: var(--text-heading); margin: 0;">0%
+                                    </h2>
                                 </div>
-                                <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 1rem;">Target: 20%</p>
+                                <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 1rem;">Target: 20%
+                                </p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
+            <!-- 7. MILK TRACKER TAB -->
+            <div id="tab-milk" class="tab-content" style="flex-direction: column; height: 100%; overflow-y: auto;">
+                <div class="overview-card neu-flat"
+                    style="margin-bottom: 1.5rem; padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                    <div>
+                        <h3 style="color: var(--text-heading); font-size: 1.2rem; margin-bottom: 0.5rem;">Select Month &
+                            Year</h3>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <select id="milk-month-select" class="neu-pressed"
+                                style="padding: 0.4rem 2rem 0.4rem 0.8rem; background-position: right 0.5rem top 50%; border: none; outline: none; border-radius: var(--radius-sm); font-size: 0.85rem; color: var(--text-heading); width: auto;">
+                                <option value="0">January</option>
+                                <option value="1">February</option>
+                                <option value="2">March</option>
+                                <option value="3">April</option>
+                                <option value="4">May</option>
+                                <option value="5">June</option>
+                                <option value="6">July</option>
+                                <option value="7">August</option>
+                                <option value="8">September</option>
+                                <option value="9">October</option>
+                                <option value="10">November</option>
+                                <option value="11">December</option>
+                            </select>
+                            <select id="milk-year-select" class="neu-pressed"
+                                style="padding: 0.4rem 2rem 0.4rem 0.8rem; background-position: right 0.5rem top 50%; border: none; outline: none; border-radius: var(--radius-sm); font-size: 0.85rem; color: var(--text-heading); width: auto;">
+                                <!-- Injected -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; align-items: flex-start; gap: 0.3rem;">
+                        <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-main);">Price per Liter
+                            (₹)</span>
+                        <div style="position: relative; display: flex; align-items: center; width: 140px;">
+                            <input type="number" id="milk-price-input" class="neu-pressed" value="70"
+                                style="padding: 0.4rem 2rem 0.4rem 0.8rem; border-radius: var(--radius-sm); font-size: 0.95rem; color: var(--text-heading); font-weight: 600;"
+                                required min="0" step="0.1">
+                            <span
+                                style="position: absolute; right: 0.8rem; color: var(--text-muted); font-size: 0.85rem; pointer-events: none;">₹</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="neu-flat"
+                    style="padding: 1.5rem; margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 1rem;">
+                    <div class="calendar-header"
+                        style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.8rem; background: var(--text-heading); color: #fff; padding: 0.8rem; border-radius: var(--radius-sm); text-align: center; font-weight: 600; font-size: 0.9rem;">
+                        <div>Sun</div>
+                        <div>Mon</div>
+                        <div>Tue</div>
+                        <div>Wed</div>
+                        <div>Thu</div>
+                        <div>Fri</div>
+                        <div>Sat</div>
+                    </div>
+
+                    <div class="milk-calendar-wrapper">
+                        <div id="milk-calendar-grid" class="milk-calendar"
+                            style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.8rem;">
+                            <!-- Injected via JS -->
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: center; margin-top: 1rem;">
+                        <button id="save-milk-calendar-btn" class="neu-btn primary"
+                            style="padding: 0.8rem 2rem; display: flex; align-items: center; gap: 0.5rem; border-radius: var(--radius-sm);">
+                            💾 Save Calendar Data
+                        </button>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2rem;">
+                    <!-- Month Summary -->
+                    <div class="neu-flat" style="padding: 1.5rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem;">
+                            <span style="font-size: 1.3rem;">📄</span>
+                            <h3 style="color: var(--text-heading); margin: 0; font-size: 1.1rem;">Month Summary</h3>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+                            <div class="neu-flat" style="padding: 1rem; display: flex; align-items: center; gap: 1rem;">
+                                <div class="tx-icon"
+                                    style="color: var(--accent-green); background: transparent; width: 36px; height: 36px; font-size: 1.1rem; min-width: 36px; box-shadow: none;">
+                                    💧</div>
+                                <div>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted); display: block;">Total
+                                        Liters</span>
+                                    <strong id="milk-total-liters"
+                                        style="font-size: 1.2rem; color: var(--text-heading);">0.00 L</strong>
+                                </div>
+                            </div>
+                            <div class="neu-flat" style="padding: 1rem; display: flex; align-items: center; gap: 1rem;">
+                                <div class="tx-icon"
+                                    style="color: var(--accent-teal); background: transparent; width: 36px; height: 36px; font-size: 1.1rem; min-width: 36px; box-shadow: none;">
+                                    ₹</div>
+                                <div>
+                                    <span style="font-size: 0.75rem; color: var(--text-muted); display: block;">Total
+                                        Amount</span>
+                                    <strong id="milk-total-amount"
+                                        style="font-size: 1.2rem; color: var(--text-heading);">₹0.00</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="neu-pressed"
+                            style="padding: 1.2rem; border-radius: var(--radius-sm); margin-bottom: 1rem;">
+                            <h4 style="font-size: 0.9rem; margin-bottom: 0.8rem; color: var(--text-heading);">Payments
+                                for this Month (₹):</h4>
+                            <div style="display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap;">
+                                <div style="flex: 1; min-width: 100px;">
+                                    <label
+                                        style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 0.4rem;">Amount
+                                        Paid</label>
+                                    <input type="number" id="milk-amount-paid" class="neu-pressed" value="0"
+                                        style="padding: 0.5rem; font-size: 0.9rem; border-radius: 6px; width: 100%; border: none;"
+                                        min="0" step="0.01">
+                                </div>
+                                <div style="flex: 1; min-width: 100px;">
+                                    <label
+                                        style="font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 0.4rem;">Advance
+                                        Amount</label>
+                                    <input type="number" id="milk-advance-paid" class="neu-pressed" value="0"
+                                        style="padding: 0.5rem; font-size: 0.9rem; border-radius: 6px; width: 100%; border: none;"
+                                        min="0" step="0.01">
+                                </div>
+                                <button id="save-milk-payment-btn" class="neu-btn"
+                                    style="padding: 0.6rem 1.2rem; font-size: 0.9rem; background-color: var(--accent-green); color: white; border-radius: 6px;">
+                                    Save Payment
+                                </button>
+                            </div>
+                        </div>
+
+                        <div
+                            style="display: flex; justify-content: space-between; align-items: center; font-weight: 600;">
+                            <span style="color: var(--text-main);">Outstanding Balance:</span>
+                            <span id="milk-outstanding-balance"
+                                style="color: var(--accent-red); font-size: 1.1rem;">₹0.00</span>
+                        </div>
+                    </div>
+
+                    <!-- Overall Outstanding -->
+                    <div class="neu-flat" style="padding: 1.5rem; display: flex; flex-direction: column;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem;">
+                            <span style="font-size: 1.3rem;">📊</span>
+                            <h3 style="color: var(--text-heading); margin: 0; font-size: 1.1rem;">Overall Outstanding
+                            </h3>
+                        </div>
+
+                        <div style="margin-bottom: 1.5rem;">
+                            <span style="font-size: 0.85rem; color: var(--text-muted); display: block;">Total Unpaid
+                                Balance</span>
+                            <strong id="milk-overall-unpaid"
+                                style="font-size: 1.8rem; color: var(--accent-red); font-weight: 800; display: block; margin-top: 0.2rem;">₹0.00</strong>
+                            <span style="font-size: 0.75rem; color: var(--text-muted); font-style: italic;">(Sum of all
+                                unpaid amounts across all months)</span>
+                        </div>
+
+                        <div style="flex: 1; display: flex; flex-direction: column;">
+                            <h4
+                                style="font-size: 0.85rem; color: var(--text-heading); margin-bottom: 0.6rem; border-bottom: 1px dashed rgba(163,177,198, 0.3); padding-bottom: 0.3rem;">
+                                Breakdown:</h4>
+                            <div id="milk-breakdown-list"
+                                style="display: flex; flex-direction: column; gap: 0.6rem; overflow-y: auto; max-height: 150px;">
+                                <!-- Injected via JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 8. REPORT TAB -->
+            <div id="tab-report" class="tab-content" style="flex-direction: column; height: 100%; overflow-y: auto;">
+                <!-- Filter Card -->
+                <div class="overview-card neu-flat" style="margin-bottom: 1.5rem; padding: 1.5rem;">
+                    <h3 style="color: var(--text-heading); font-size: 1.2rem; margin-bottom: 1rem;">Generate Expense
+                        Report</h3>
+                    <div class="report-filters">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Start Date</label>
+                            <input type="date" id="report-start-date" class="neu-pressed" style="padding: 0.6rem 1rem;">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>End Date</label>
+                            <input type="date" id="report-end-date" class="neu-pressed" style="padding: 0.6rem 1rem;">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Category</label>
+                            <select id="report-category-select" class="neu-pressed"
+                                style="padding: 0.6rem 2rem 0.6rem 1rem;">
+                                <option value="ALL">All Categories</option>
+                                <!-- Injected via JS -->
+                            </select>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                            <button id="generate-report-btn" class="neu-btn primary"
+                                style="padding: 0.8rem 1.5rem; flex: 1; min-height: 48px;">Generate Report</button>
+                            <button id="clear-report-filters-btn" class="neu-btn"
+                                style="padding: 0.8rem 1.5rem; color: var(--accent-red); min-height: 48px;">Clear</button>
+                        </div>
+                    </div>
+
+                    <!-- Quick Presets -->
+                    <div style="margin-top: 1rem;">
+                        <span
+                            style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; display: block; margin-bottom: 0.4rem;">Quick
+                            Date Presets:</span>
+                        <div class="report-presets">
+                            <button class="neu-btn" data-preset="this-month">This Month</button>
+                            <button class="neu-btn" data-preset="last-month">Last Month</button>
+                            <button class="neu-btn" data-preset="last-30-days">Last 30 Days</button>
+                            <button class="neu-btn" data-preset="this-year">This Year</button>
+                            <button class="neu-btn" data-preset="all-time">All Time</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Summary Metrics Cards -->
+                <div class="report-metrics" style="margin-bottom: 1.5rem;">
+                    <div class="report-metric-card neu-flat">
+                        <span>Total Expenses</span>
+                        <strong id="report-total-sum" style="color: var(--accent-red);">₹0.00</strong>
+                    </div>
+                    <div class="report-metric-card neu-flat">
+                        <span>Average Expense</span>
+                        <strong id="report-avg-amount">₹0.00</strong>
+                    </div>
+                    <div class="report-metric-card neu-flat">
+                        <span>No. of Expenses</span>
+                        <strong id="report-count" style="color: var(--accent-teal);">0</strong>
+                    </div>
+                    <div class="report-metric-card neu-flat">
+                        <span>Highest Expense</span>
+                        <strong id="report-max-amount" style="color: var(--accent-orange);">₹0.00</strong>
+                    </div>
+                </div>
+
+                <!-- Report Table Container -->
+                <div class="neu-flat" style="padding: 1.5rem; margin-bottom: 2rem;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                        <h3 style="color: var(--text-heading); font-size: 1.1rem; margin: 0;">Detailed Transactions</h3>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button id="export-report-csv-btn" class="neu-btn"
+                                style="padding: 0.6rem 1.2rem; font-size: 0.85rem; display: flex; align-items: center; gap: 0.4rem;">
+                                📥 Export CSV
+                            </button>
+                            <button id="print-report-btn" class="neu-btn"
+                                style="padding: 0.6rem 1.2rem; font-size: 0.85rem; display: flex; align-items: center; gap: 0.4rem;">
+                                🖨️ Print Report
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="report-table-container">
+                        <table class="report-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Category</th>
+                                    <th>Description</th>
+                                    <th style="text-align: right;">Amount (₹)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="report-table-body">
+                                <!-- Injected via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
             <!-- 6. SETTINGS TAB -->
             <div id="tab-settings" class="tab-content">
-                <div class="settings-card neu-flat" style="max-width: 500px;">
-                    <h3>Settings</h3>
+                <div style="display: flex; gap: 2rem; flex-wrap: wrap; align-items: flex-start;">
+                    
+                    <!-- Left Column -->
+                    <div class="settings-card neu-flat" style="flex: 1 1 0%; min-width: 300px;">
+                        <h3>Profile & Sync</h3>
 
-                    <div class="form-group" style="margin-top: 2rem;">
-                        <label>Your Name</label>
-                        <div style="display: flex; gap: 1rem;">
-                            <input type="text" id="user-name-input" class="neu-pressed" value="Rojaa">
-                            <button id="save-name-btn" class="neu-btn primary" style="padding: 0 1.5rem;">Save</button>
+                        <div class="form-group" style="margin-top: 2rem;">
+                            <label>Your Name</label>
+                            <div style="display: flex; gap: 1rem;">
+                                <input type="text" id="user-name-input" class="neu-pressed" style="width: 100%; box-sizing: border-box;" value="Rojaa">
+                                <button id="save-name-btn" class="neu-btn primary" style="padding: 0 1.5rem;">Save</button>
+                            </div>
+                        </div>
+
+                        <div class="form-group"
+                            style="margin-top: 2rem; padding-top: 2rem; border-top: 2px dashed rgba(163,177,198, 0.3);">
+                            <label>Firebase Cloud Sync (Optional)</label>
+                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+                                Sync your data across devices using your own free Firebase account.
+                            </p>
+                            
+                            <div id="firebase-setup-section">
+                                <!-- When not connected -->
+                                <div id="firebase-logged-out">
+                                    <div class="form-group">
+                                        <label>Firebase Config (JSON)</label>
+                                        <textarea id="firebase-config-input" class="neu-pressed" style="width: 100%; height: 100px; padding: 0.8rem; font-family: monospace; font-size: 0.8rem; border-radius: var(--radius-sm); border: none; resize: vertical; outline: none; margin-bottom: 0.5rem; box-sizing: border-box;" placeholder='{&#10;  "apiKey": "...",&#10;  "authDomain": "...",&#10;  "projectId": "..."&#10;}'></textarea>
+                                    </div>
+                                    <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1rem;">
+                                        <div style="flex: 1 1 200px;">
+                                            <label style="margin-bottom: 0.4rem; display: block;">Email</label>
+                                            <input type="email" id="firebase-email-input" class="neu-pressed" style="padding: 0.6rem; font-size: 0.9rem; border-radius: 6px; border: none; outline: none; width: 100%; box-sizing: border-box;" placeholder="email@example.com">
+                                        </div>
+                                        <div style="flex: 1 1 200px;">
+                                            <label style="margin-bottom: 0.4rem; display: block;">Password</label>
+                                            <input type="password" id="firebase-password-input" class="neu-pressed" style="padding: 0.6rem; font-size: 0.9rem; border-radius: 6px; border: none; outline: none; width: 100%; box-sizing: border-box;" placeholder="••••••••">
+                                        </div>
+                                    </div>
+                                    <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1.5rem;">
+                                        <button id="firebase-login-btn" class="neu-btn primary" style="flex: 1 1 150px; padding: 0.8rem;">Login / Connect</button>
+                                        <button id="firebase-register-btn" class="neu-btn" style="flex: 1 1 150px; padding: 0.8rem;">Create Account</button>
+                                    </div>
+                                </div>
+                                
+                                <!-- When connected -->
+                                <div id="firebase-logged-in" style="display: none; text-align: center; padding: 1rem;">
+                                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">☁️</div>
+                                    <p style="font-weight: 600; color: var(--text-heading); margin-bottom: 0.3rem;" id="firebase-user-status">Connected</p>
+                                    <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.5rem;">Your tracker is securely syncing with the cloud.</p>
+                                    <div style="display: flex; gap: 1rem;">
+                                        <button id="firebase-sync-now-btn" class="neu-btn primary" style="flex: 1; padding: 0.8rem;">🔄 Sync Now</button>
+                                        <button id="firebase-logout-btn" class="neu-btn" style="flex: 1; padding: 0.8rem; color: var(--accent-red);">Sign Out</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="form-group"
-                        style="margin-top: 2rem; padding-top: 2rem; border-top: 2px dashed rgba(163,177,198, 0.3);">
-                        <label>Initial Starting Balance (Leftover prior to using app)</label>
-                        <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
-                            <span class="neu-pressed"
-                                style="padding: 0.8rem; border-radius: var(--radius-sm); color: var(--text-muted); display: flex; align-items: center;">₹</span>
-                            <input type="number" id="starting-balance-input" class="neu-pressed" style="flex: 1;"
-                                placeholder="0" step="0.01">
-                            <button id="save-balance-btn" class="neu-btn primary"
-                                style="padding: 0 1.5rem;">Save</button>
+                    <!-- Right Column -->
+                    <div class="settings-card neu-flat" style="flex: 1 1 0%; min-width: 300px;">
+                        <h3>Data & Preferences</h3>
+
+                        <div class="form-group" style="margin-top: 2rem;">
+                            <label>Initial Starting Balance</label>
+                            <div style="display: flex; gap: 1rem;">
+                                <span class="neu-pressed" style="padding: 0.8rem; border-radius: var(--radius-sm); color: var(--text-muted); display: flex; align-items: center;">₹</span>
+                                <input type="number" id="starting-balance-input" class="neu-pressed" style="flex: 1; width: 100%; box-sizing: border-box;" placeholder="0" step="0.01">
+                                <button id="save-balance-btn" class="neu-btn primary" style="padding: 0 1.5rem;">Save</button>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="form-group"
-                        style="margin-top: 2rem; padding-top: 2rem; border-top: 2px dashed rgba(163,177,198, 0.3);">
-                        <label>Add Custom Expense Category</label>
-                        <form id="add-category-form" style="display: flex; gap: 1rem; margin-top: 0.5rem;">
-                            <input type="text" id="new-cat-emoji" class="neu-pressed" placeholder="Icon (e.g. 🍕)"
-                                style="width: 100px;" required>
-                            <input type="text" id="new-cat-name" class="neu-pressed" placeholder="Category Name"
-                                style="flex: 1;" required>
-                            <button type="submit" class="neu-btn primary" style="padding: 0 1.5rem;">Add</button>
-                        </form>
-                    </div>
-
-                    <div style="margin-top: 3rem; padding-top: 2rem; border-top: 2px dashed rgba(163,177,198, 0.3);">
-                        <h4 style="margin-bottom: 1rem; color: var(--text-heading);">Data Backup & Restore</h4>
-                        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">Export your data to keep it safe, or import a previous backup.</p>
-                        <div style="display: flex; gap: 1rem;">
-                            <button id="export-btn" class="neu-btn primary" style="flex: 1; padding: 1rem;">📥 Export Backup</button>
-                            <button id="import-btn-trigger" class="neu-btn" style="flex: 1; padding: 1rem;">📤 Import Backup</button>
-                            <input type="file" id="import-file" accept=".json" style="display: none;">
+                        <div class="form-group"
+                            style="margin-top: 2rem; padding-top: 2rem; border-top: 2px dashed rgba(163,177,198, 0.3);">
+                            <label>Add Custom Expense Category</label>
+                            <form id="add-category-form" style="display: flex; gap: 1rem; margin-top: 0.5rem;">
+                                <input type="text" id="new-cat-emoji" class="neu-pressed" placeholder="Icon (e.g. 🍕)"
+                                    style="width: 100px;" required>
+                                <input type="text" id="new-cat-name" class="neu-pressed" placeholder="Category Name"
+                                    style="flex: 1;" required>
+                                <button type="submit" class="neu-btn primary" style="padding: 0 1.5rem;">Add</button>
+                            </form>
                         </div>
-                    </div>
 
-                    <div style="margin-top: 3rem; padding-top: 2rem; border-top: 2px dashed rgba(163,177,198, 0.3);">
-                        <h4 style="color: var(--accent-red); margin-bottom: 1rem;">Danger Zone</h4>
-                        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">This will
-                            permanently delete all your tracking data.</p>
-                        <button id="clear-data" class="neu-btn"
-                            style="color: var(--accent-red); width: 100%; padding: 1rem;">Clear All Data</button>
+                        <div style="margin-top: 2rem; padding-top: 2rem; border-top: 2px dashed rgba(163,177,198, 0.3);">
+                            <h4 style="margin-bottom: 1rem; color: var(--text-heading);">Data Backup & Restore</h4>
+                            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">Export your data to
+                                keep it safe, or import a previous backup.</p>
+                            <div style="display: flex; gap: 1rem;">
+                                <button id="export-btn" class="neu-btn primary" style="flex: 1; padding: 1rem;">📥 Export
+                                    Backup</button>
+                                <button id="import-btn-trigger" class="neu-btn" style="flex: 1; padding: 1rem;">📤 Import
+                                    Backup</button>
+                                <input type="file" id="import-file" accept=".json" style="display: none;">
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 2rem; padding-top: 2rem; border-top: 2px dashed rgba(163,177,198, 0.3);">
+                            <h4 style="color: var(--accent-red); margin-bottom: 1rem;">Danger Zone</h4>
+                            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;">This will
+                                permanently delete all your tracking data.</p>
+                            <button id="clear-data" class="neu-btn"
+                                style="color: var(--accent-red); width: 100%; padding: 1rem;">Clear All Data</button>
+                        </div>
                     </div>
                 </div>
             </div>
 
         </div>
     </div>
+    <!-- Firebase SDK Compat -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="app.js"></script>
 </body>
 
