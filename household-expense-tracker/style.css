@@ -653,6 +653,15 @@ select {
 
 /* Mobile Breakpoint */
 @media (max-width: 768px) {
+    .tab-content {
+        height: auto !important;
+        overflow: visible !important;
+    }
+
+    .dashboard-grid section {
+        min-height: 320px;
+    }
+
     body {
         overflow: auto; /* Allow scrolling on body if needed */
     }
