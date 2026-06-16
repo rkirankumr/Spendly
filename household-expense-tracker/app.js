@@ -716,6 +716,26 @@ function parseFirebaseConfig(text) {
 }
 
 function setupSettings() {
+    // Bind sub-tabs inside settings
+    const subTabBtns = document.querySelectorAll('.sub-tab-btn');
+    const settingsPanels = document.querySelectorAll('.settings-panel');
+    subTabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            subTabBtns.forEach(b => b.classList.remove('active'));
+            settingsPanels.forEach(p => {
+                p.style.display = 'none';
+                p.classList.remove('active');
+            });
+            
+            btn.classList.add('active');
+            const targetPanel = document.getElementById(`settings-${btn.dataset.subTab}-panel`);
+            if (targetPanel) {
+                targetPanel.style.display = 'block';
+                targetPanel.classList.add('active');
+            }
+        });
+    });
+
     // Populate Firebase config if saved
     const configInput = document.getElementById('firebase-config-input');
     if (configInput) {

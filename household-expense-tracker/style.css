@@ -134,6 +134,7 @@ body {
     cursor: pointer;
     border-radius: var(--radius-sm);
     transition: all 0.2s ease;
+    flex-shrink: 0;
 }
 
 .nav-btn:hover {
@@ -202,6 +203,61 @@ header {
 .tab-content.active {
     display: flex;
     flex-direction: column;
+}
+
+#tab-settings {
+    flex-direction: column;
+    overflow-y: auto;
+    padding: 1.2rem 1.2rem 3rem 1.2rem;
+    flex: 1;
+    min-height: 0;
+}
+
+/* Compact layout style for Settings on desktop to fit on a single page */
+#tab-settings > div {
+    gap: 1.2rem !important;
+}
+
+#tab-settings .settings-card {
+    padding: 1.2rem !important;
+}
+
+#tab-settings h3 {
+    margin-bottom: 0.8rem;
+}
+
+#tab-settings .form-group,
+#tab-settings div[style*="margin-top: 2rem"],
+#tab-settings form[style*="margin-top"] {
+    margin-top: 1rem !important;
+    margin-bottom: 0 !important;
+}
+
+#tab-settings div[style*="padding-top: 2rem"] {
+    padding-top: 1rem !important;
+}
+
+#tab-settings input,
+#tab-settings select {
+    padding: 0.6rem !important;
+    font-size: 0.9rem !important;
+}
+
+#tab-settings textarea {
+    height: 70px !important;
+    padding: 0.5rem !important;
+}
+
+#tab-settings button,
+#tab-settings button[style*="padding: 1rem"],
+#tab-settings button[style*="padding: 0.8rem"] {
+    padding: 0.6rem 1rem !important;
+}
+
+#tab-settings .sub-tab-btn.active {
+    color: var(--accent-teal) !important;
+    box-shadow: inset 4px 4px 8px var(--shadow-dark),
+                inset -4px -4px 8px var(--shadow-light) !important;
 }
 
 @keyframes fadeIn {
@@ -636,7 +692,9 @@ select {
     .nav-links {
         flex-direction: row;
         gap: 0.5rem;
-        margin: 0 auto;
+        margin: 0;
+        display: flex;
+        flex-wrap: nowrap;
     }
 
     .nav-btn {
@@ -669,8 +727,16 @@ select {
 
     .header-right {
         width: 100%;
-        justify-content: flex-start;
+        justify-content: flex-start !important;
         padding-bottom: 10px;
+    }
+
+    .overview-card, .transactions-section, .list-card, .add-card, .budget-card, .settings-card {
+        padding: 1.2rem;
+    }
+    
+    .chart-container {
+        min-height: 250px;
     }
 
     .dashboard-grid, .split-layout {
@@ -702,6 +768,12 @@ select {
         width: 100%;
         overflow-x: auto;
         padding-bottom: 1rem;
+    }
+
+    #tab-settings {
+        height: auto;
+        overflow: visible;
+        padding: 0.5rem 0.5rem 4rem 0.5rem;
     }
 }
 

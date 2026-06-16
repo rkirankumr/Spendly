@@ -1,0 +1,17 @@
+{
+  "name": "Spendly - Household Expense Tracker",
+  "short_name": "Spendly",
+  "description": "A beautiful neumorphic household expense tracker.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#e0e5ec",
+  "theme_color": "#76c8c8",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
