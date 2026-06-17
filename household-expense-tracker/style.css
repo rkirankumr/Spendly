@@ -638,16 +638,27 @@ select {
 @media (max-width: 1024px) {
     .app-container {
         padding: 1rem 1.5rem;
+        overflow-y: auto;
     }
     
-    .dashboard-grid {
-        gap: 1.5rem;
+    .tab-content {
+        height: auto !important;
+        overflow: visible !important;
+    }
+    
+    .dashboard-grid, .split-layout {
+        grid-template-columns: 1fr;
     }
     
     .side-nav {
         width: 200px;
         min-width: 200px;
         padding: 1.5rem;
+    }
+    
+    .transaction-list {
+        max-height: none;
+        overflow: visible;
     }
 }
 
@@ -679,7 +690,7 @@ select {
         height: 80px;
         min-height: 80px;
         flex-direction: row;
-        padding: 0 1rem;
+        padding: 0 0.5rem;
         box-shadow: 0px -4px 16px rgba(163,177,198,0.4);
         overflow-x: auto;
         overflow-y: hidden;
@@ -700,7 +711,7 @@ select {
 
     .nav-links {
         flex-direction: row;
-        gap: 0.5rem;
+        gap: 0.2rem;
         margin: 0;
         display: flex;
         flex-wrap: nowrap;
@@ -708,13 +719,21 @@ select {
 
     .nav-btn {
         width: auto;
-        padding: 0.8rem 1rem;
+        padding: 0.6rem 0.8rem;
         text-align: center;
         white-space: nowrap;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem; /* Icon size */
     }
 
     .nav-btn .nav-text {
-        display: none; /* Hide text on mobile nav, only show icons */
+        display: block; /* Show text on mobile nav! */
+        font-size: 0.65rem;
+        margin-top: 4px;
+        font-weight: 600;
     }
 
     .app-container {
