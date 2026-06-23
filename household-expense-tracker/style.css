@@ -820,12 +820,12 @@ select {
 /* #tab-piggy overflow is handled in the global rule above */
 
 .piggy-bank-wrapper {
-    padding: 0.8rem 1rem;
+    padding: 0.4rem 1rem;
     max-width: 100%;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 0.8rem;
+    gap: 0.5rem;
     height: 100%;
     box-sizing: border-box;
 }
@@ -853,9 +853,9 @@ select {
 .piggy-main-display {
     display: grid;
     grid-template-columns: auto 1fr;
-    gap: 1.2rem;
+    gap: 1rem;
     align-items: center;
-    padding: 1rem 1.2rem;
+    padding: 0.6rem 1.2rem;
     border-radius: var(--radius-md);
     position: relative;
     overflow: hidden;
@@ -898,8 +898,8 @@ select {
 
 /* Pig SVG - smaller to fit screen */
 .pig-svg {
-    width: 160px;
-    height: 160px;
+    width: 120px;
+    height: 120px;
     filter: drop-shadow(0 6px 16px rgba(255, 143, 171, 0.35));
     transition: filter 0.5s ease;
     animation: pigBreathe 3s ease-in-out infinite;
@@ -968,14 +968,14 @@ select {
 .piggy-info {
     display: flex;
     flex-direction: column;
-    gap: 0.7rem;
+    gap: 0.4rem;
     z-index: 2;
     min-width: 0;
 }
 
 .piggy-amount-display {
     text-align: center;
-    padding: 0.7rem 1rem;
+    padding: 0.5rem 1rem;
     border-radius: var(--radius-md);
     box-shadow: inset 4px 4px 10px rgba(163,177,198,0.5), inset -4px -4px 10px rgba(255,255,255,0.9);
     background: var(--neu-bg);
@@ -992,7 +992,7 @@ select {
 
 .piggy-amount {
     display: block;
-    font-size: 1.9rem;
+    font-size: 1.6rem;
     font-weight: 900;
     color: var(--accent-teal);
     margin-bottom: 0.1rem;
@@ -1053,7 +1053,7 @@ select {
 
 /* Message box - compact */
 .piggy-message-box {
-    padding: 0.6rem 1rem;
+    padding: 0.5rem 1rem;
     border-radius: var(--radius-sm);
     box-shadow: var(--shadow-neu);
     background: var(--neu-bg);
@@ -1073,12 +1073,12 @@ select {
 .piggy-stats-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 0.6rem;
+    gap: 0.4rem;
     flex-shrink: 0;
 }
 
 .piggy-stat-card {
-    padding: 0.7rem 0.5rem;
+    padding: 0.5rem 0.4rem;
     text-align: center;
     border-radius: var(--radius-sm);
     transition: transform 0.2s ease;
@@ -1089,8 +1089,8 @@ select {
 }
 
 .piggy-stat-icon {
-    font-size: 1.4rem;
-    margin-bottom: 0.3rem;
+    font-size: 1.2rem;
+    margin-bottom: 0.2rem;
 }
 
 .piggy-stat-label {
@@ -1110,7 +1110,7 @@ select {
 
 /* History chart - compact */
 .piggy-history-section {
-    padding: 1rem 1.2rem;
+    padding: 0.6rem 1.2rem;
     border-radius: var(--radius-sm);
     flex-shrink: 0;
 }
