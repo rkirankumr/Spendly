@@ -752,6 +752,17 @@ function setupSettings() {
         });
     }
 
+    function showAuthError(msg) {
+        const errEl = document.getElementById('firebase-error-msg');
+        if (errEl) {
+            errEl.textContent = msg;
+            errEl.style.display = 'block';
+            setTimeout(() => { errEl.style.display = 'none'; }, 5000);
+        } else {
+            alert(msg);
+        }
+    }
+
     // Bind Firebase buttons
     const loginBtn = document.getElementById('firebase-login-btn');
     if (loginBtn) {
@@ -761,11 +772,11 @@ function setupSettings() {
             const password = document.getElementById('firebase-password-input').value;
 
             if (!configText) {
-                alert("Please paste your Firebase Config JSON first.");
+                showAuthError("Please paste your Firebase Config JSON first.");
                 return;
             }
             if (!email || !password) {
-                alert("Please enter both email and password.");
+                showAuthError("Please enter both email and password.");
                 return;
             }
 
@@ -773,18 +784,20 @@ function setupSettings() {
             try {
                 configObj = parseFirebaseConfig(configText);
             } catch (e) {
-                alert(e.message);
+                showAuthError(e.message);
                 return;
             }
 
             try {
+                loginBtn.textContent = "Connecting...";
                 await DataService.saveSettingRaw('firebaseConfig', configObj);
                 await initFirebase(configObj);
                 await firebase.auth().signInWithEmailAndPassword(email, password);
-                alert("Successfully connected and signed in!");
+                loginBtn.textContent = "Login / Connect";
             } catch (err) {
                 console.error("Sign in failed:", err);
-                alert("Connection/Authentication failed: " + err.message);
+                showAuthError("Connection failed: " + err.message);
+                loginBtn.textContent = "Login / Connect";
             }
         });
     }
@@ -797,15 +810,15 @@ function setupSettings() {
             const password = document.getElementById('firebase-password-input').value;
 
             if (!configText) {
-                alert("Please paste your Firebase Config JSON first.");
+                showAuthError("Please paste your Firebase Config JSON first.");
                 return;
             }
             if (!email || !password) {
-                alert("Please enter email and password for the new account.");
+                showAuthError("Please enter email and password for the new account.");
                 return;
             }
             if (password.length < 6) {
-                alert("Password should be at least 6 characters long.");
+                showAuthError("Password must be at least 6 characters.");
                 return;
             }
 
@@ -813,18 +826,20 @@ function setupSettings() {
             try {
                 configObj = parseFirebaseConfig(configText);
             } catch (e) {
-                alert(e.message);
+                showAuthError(e.message);
                 return;
             }
 
             try {
+                registerBtn.textContent = "Creating...";
                 await DataService.saveSettingRaw('firebaseConfig', configObj);
                 await initFirebase(configObj);
                 await firebase.auth().createUserWithEmailAndPassword(email, password);
-                alert("Account created and connected successfully!");
+                registerBtn.textContent = "Create Account";
             } catch (err) {
                 console.error("Registration failed:", err);
-                alert("Registration failed: " + err.message);
+                showAuthError("Registration failed: " + err.message);
+                registerBtn.textContent = "Create Account";
             }
         });
     }
