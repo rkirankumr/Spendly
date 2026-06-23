@@ -247,20 +247,47 @@ async function initApp() {
     await migrateData();
     await loadState();
 
+function showToast(msg, isError = false) {
+    const toast = document.createElement('div');
+    toast.textContent = msg;
+    toast.style.position = 'fixed';
+    toast.style.bottom = '20px';
+    toast.style.left = '50%';
+    toast.style.transform = 'translateX(-50%)';
+    toast.style.backgroundColor = isError ? 'var(--accent-red)' : 'var(--accent-teal)';
+    toast.style.color = 'white';
+    toast.style.padding = '10px 20px';
+    toast.style.borderRadius = '20px';
+    toast.style.zIndex = '9999';
+    toast.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
+    toast.style.fontSize = '0.9rem';
+    document.body.appendChild(toast);
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.5s ease';
+        setTimeout(() => document.body.removeChild(toast), 500);
+    }, 5000);
+}
+
     try {
         initFirebase(SPENDLY_FIREBASE_CONFIG);
         // Seamless Solo User Auto-Login
         const soloEmail = "kiran.solo@spendly.app";
         const soloPass = "SpendlySolo2026!";
-        firebase.auth().signInWithEmailAndPassword(soloEmail, soloPass).catch(err => {
+        firebase.auth().signInWithEmailAndPassword(soloEmail, soloPass)
+            .then(() => showToast("Logged in to Cloud!"))
+            .catch(err => {
             if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
-                firebase.auth().createUserWithEmailAndPassword(soloEmail, soloPass).catch(e => console.error("Auto-registration failed:", e));
+                firebase.auth().createUserWithEmailAndPassword(soloEmail, soloPass)
+                    .then(() => showToast("Cloud Account Created!"))
+                    .catch(e => showToast("Auto-registration failed: " + e.message, true));
             } else {
-                console.error("Auto-login failed:", err);
+                showToast("Auto-login failed: " + err.message, true);
             }
         });
     } catch (e) {
         console.error("Failed to initialize Firebase:", e);
+        showToast("Firebase Init Failed: " + e.message, true);
     }
 
     updateCategoryDropdowns();
@@ -2500,9 +2527,10 @@ async function syncWithFirebase() {
         }
 
         console.log("Firebase sync completed successfully!");
+        showToast("Cloud Sync Complete!");
     } catch (err) {
         console.error("Firebase sync error:", err);
-        alert("Sync failed: " + err.message);
+        showToast("Sync failed: " + err.message, true);
     }
 }
 
