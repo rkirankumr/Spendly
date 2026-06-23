@@ -249,6 +249,16 @@ async function initApp() {
 
     try {
         initFirebase(SPENDLY_FIREBASE_CONFIG);
+        // Seamless Solo User Auto-Login
+        const soloEmail = "kiran.solo@spendly.app";
+        const soloPass = "SpendlySolo2026!";
+        firebase.auth().signInWithEmailAndPassword(soloEmail, soloPass).catch(err => {
+            if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
+                firebase.auth().createUserWithEmailAndPassword(soloEmail, soloPass).catch(e => console.error("Auto-registration failed:", e));
+            } else {
+                console.error("Auto-login failed:", err);
+            }
+        });
     } catch (e) {
         console.error("Failed to initialize Firebase:", e);
     }
