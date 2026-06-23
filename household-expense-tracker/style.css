@@ -646,9 +646,10 @@ select {
         overflow-y: auto;
     }
     
-    .tab-content {
-        height: auto !important;
-        overflow: visible !important;
+    /* Only the ACTIVE tab scrolls freely */
+    .tab-content.active {
+        height: auto;
+        overflow-y: auto;
     }
     
     .dashboard-grid, .split-layout {
@@ -669,9 +670,10 @@ select {
 
 /* Mobile Breakpoint */
 @media (max-width: 768px) {
-    .tab-content {
-        height: auto !important;
-        overflow: visible !important;
+    /* Only active tab is visible and scrollable */
+    .tab-content.active {
+        height: auto;
+        overflow-y: auto;
     }
 
     .dashboard-grid section {
@@ -815,10 +817,7 @@ select {
    VIRTUAL PIGGY BANK STYLES - Compact Screen-Fit
    =================================================== */
 
-#tab-piggy {
-    overflow-y: auto;
-    flex-direction: column;
-}
+/* #tab-piggy overflow is handled in the global rule above */
 
 .piggy-bank-wrapper {
     padding: 0.8rem 1rem;
