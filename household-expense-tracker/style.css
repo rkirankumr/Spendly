@@ -205,6 +205,11 @@ header {
     flex-direction: column;
 }
 
+#tab-piggy {
+    overflow-y: auto;
+    flex-direction: column;
+}
+
 #tab-settings {
     flex-direction: column;
     overflow-y: auto;

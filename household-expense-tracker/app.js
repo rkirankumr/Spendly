@@ -472,6 +472,11 @@ function setupTabs() {
                 updateReportCategories();
                 generateReport();
             }
+            if (btn.dataset.tab === 'piggy') {
+                updatePiggyBank();
+            } else {
+                stopCoinAnimation();
+            }
         });
     });
 }
