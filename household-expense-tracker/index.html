@@ -59,6 +59,8 @@
                             class="nav-text">Report</span></button></li>
                 <li><button class="nav-btn" data-tab="settings" title="Settings">⚙️ <span
                             class="nav-text">Settings</span></button></li>
+                <li><button class="nav-btn" data-tab="piggy" title="Piggy Bank">🐷 <span
+                            class="nav-text">Piggy Bank</span></button></li>
             </ul>
         </nav>
 
@@ -869,6 +871,147 @@
                 </div>
             </div>
             </div>
+
+            <!-- ===== PIGGY BANK TAB ===== -->
+            <div id="tab-piggy" class="tab-content">
+                <div class="piggy-bank-wrapper">
+
+                    <!-- Header -->
+                    <div class="piggy-header">
+                        <h2>🐷 Virtual Piggy Bank</h2>
+                        <p>The pig grows fatter with your savings — and cries when you overspend!</p>
+                    </div>
+
+                    <!-- Main display: pig + info -->
+                    <div class="piggy-main-display neu-flat">
+
+                        <!-- Coin rain container -->
+                        <div id="piggy-coins" class="piggy-coins-container"></div>
+
+                        <!-- Pig SVG -->
+                        <div class="pig-wrapper">
+                            <svg id="piggy-svg" class="pig-svg" viewBox="0 0 240 240" data-state="normal" xmlns="http://www.w3.org/2000/svg">
+                                <!-- Party hat (shown when ecstatic) -->
+                                <g id="pig-hat" style="display:none">
+                                    <polygon points="120,8 90,52 150,52" fill="#f6ad55"/>
+                                    <rect x="87" y="50" width="66" height="10" rx="5" fill="#ed8936"/>
+                                    <circle cx="100" cy="32" r="4" fill="#fc8181"/>
+                                    <circle cx="115" cy="19" r="3" fill="#68d391"/>
+                                    <circle cx="132" cy="30" r="3.5" fill="#b794f4"/>
+                                    <line x1="95" y1="50" x2="80" y2="20" stroke="#f6ad55" stroke-width="1.5" stroke-dasharray="3,2"/>
+                                    <line x1="125" y1="50" x2="145" y2="22" stroke="#fc8181" stroke-width="1.5" stroke-dasharray="3,2"/>
+                                </g>
+
+                                <!-- Tail -->
+                                <path d="M 192 155 Q 215 138 208 112 Q 202 90 218 84" stroke="#FFB3C6" stroke-width="6" fill="none" stroke-linecap="round"/>
+
+                                <!-- Body (scales for fatness) -->
+                                <g id="pig-body-group">
+                                    <ellipse id="pig-body" cx="115" cy="168" rx="80" ry="65" fill="#FFD6E0"/>
+                                    <ellipse cx="110" cy="178" rx="50" ry="40" fill="#FFE5EE" opacity="0.55"/>
+                                    <!-- Coin slot -->
+                                    <rect x="106" y="108" width="28" height="8" rx="4" fill="#CC5E7A"/>
+                                    <!-- Legs -->
+                                    <ellipse cx="82" cy="222" rx="18" ry="14" fill="#FFB3C6"/>
+                                    <ellipse cx="122" cy="226" rx="18" ry="13" fill="#FFB3C6"/>
+                                    <ellipse cx="160" cy="222" rx="18" ry="14" fill="#FFB3C6"/>
+                                </g>
+
+                                <!-- Head -->
+                                <circle cx="120" cy="95" r="58" fill="#FFD6E0"/>
+
+                                <!-- Ears -->
+                                <ellipse cx="70" cy="52" rx="24" ry="30" fill="#FFD6E0"/>
+                                <ellipse cx="170" cy="52" rx="24" ry="30" fill="#FFD6E0"/>
+                                <ellipse cx="70" cy="52" rx="14" ry="20" fill="#FF8FAB"/>
+                                <ellipse cx="170" cy="52" rx="14" ry="20" fill="#FF8FAB"/>
+
+                                <!-- Blush (shown when happy/ecstatic) -->
+                                <circle class="pig-blush" cx="84" cy="108" r="15" fill="#FF8FAB" opacity="0" style="transition:opacity 0.6s;"/>
+                                <circle class="pig-blush" cx="156" cy="108" r="15" fill="#FF8FAB" opacity="0" style="transition:opacity 0.6s;"/>
+
+                                <!-- Eyes -->
+                                <circle cx="100" cy="84" r="11" fill="white"/>
+                                <circle cx="140" cy="84" r="11" fill="white"/>
+                                <circle id="pig-pupil-l" cx="102" cy="85" r="6" fill="#2D3748"/>
+                                <circle id="pig-pupil-r" cx="142" cy="85" r="6" fill="#2D3748"/>
+                                <circle cx="104" cy="82" r="2.5" fill="white"/>
+                                <circle cx="144" cy="82" r="2.5" fill="white"/>
+
+                                <!-- Tear drops (shown when crying) -->
+                                <ellipse class="pig-tear" id="pig-tear-l" cx="90" cy="100" rx="4" ry="7" fill="#63b3ed" opacity="0" style="transition:opacity 0.4s;"/>
+                                <ellipse class="pig-tear" id="pig-tear-r" cx="132" cy="100" rx="4" ry="7" fill="#63b3ed" opacity="0" style="transition:opacity 0.4s;"/>
+
+                                <!-- Snout -->
+                                <ellipse cx="120" cy="116" rx="26" ry="18" fill="#FF8FAB"/>
+                                <circle cx="112" cy="116" r="6" fill="#CC5E7A"/>
+                                <circle cx="128" cy="116" r="6" fill="#CC5E7A"/>
+
+                                <!-- Mouth (path changes with state) -->
+                                <path id="pig-mouth" d="M 106 132 Q 120 142 134 132" stroke="#CC5E7A" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+                            </svg>
+                            <div class="pig-glow"></div>
+                        </div>
+
+                        <!-- Info panel -->
+                        <div class="piggy-info">
+                            <div class="piggy-amount-display">
+                                <span id="piggy-savings-label" class="piggy-label">Saved This Month</span>
+                                <span id="piggy-savings-amount" class="piggy-amount">₹0</span>
+                                <span id="piggy-savings-rate" class="piggy-rate">0% of income</span>
+                            </div>
+
+                            <div class="piggy-fullness-bar-wrapper">
+                                <span class="piggy-bar-label">🐽 Piggy Fullness</span>
+                                <div class="piggy-fullness-bar">
+                                    <div id="piggy-fill-bar" class="piggy-fill" style="width:0%"></div>
+                                </div>
+                                <div class="piggy-bar-markers">
+                                    <span>Empty</span><span>25%</span><span>50%</span><span>75%</span><span>Full!</span>
+                                </div>
+                            </div>
+
+                            <div class="piggy-message-box">
+                                <p id="piggy-message">Start saving to make the piggy happy! 🐷</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stats Grid -->
+                    <div class="piggy-stats-grid">
+                        <div class="piggy-stat-card neu-flat">
+                            <div class="piggy-stat-icon">💰</div>
+                            <span class="piggy-stat-label">This Month Income</span>
+                            <div class="piggy-stat-value" id="piggy-income">₹0</div>
+                        </div>
+                        <div class="piggy-stat-card neu-flat">
+                            <div class="piggy-stat-icon">💸</div>
+                            <span class="piggy-stat-label">This Month Expenses</span>
+                            <div class="piggy-stat-value" id="piggy-expense">₹0</div>
+                        </div>
+                        <div class="piggy-stat-card neu-flat">
+                            <div class="piggy-stat-icon">🏆</div>
+                            <span class="piggy-stat-label">Best Savings Month</span>
+                            <div class="piggy-stat-value" id="piggy-best-month">—</div>
+                        </div>
+                        <div class="piggy-stat-card neu-flat">
+                            <div class="piggy-stat-icon">🔥</div>
+                            <span class="piggy-stat-label">Saving Streak</span>
+                            <div class="piggy-stat-value" id="piggy-streak">0 months</div>
+                        </div>
+                    </div>
+
+                    <!-- Savings History Chart -->
+                    <div class="piggy-history-section neu-flat">
+                        <h3>📈 6-Month Savings History</h3>
+                        <div style="height: 220px; position: relative; margin-top: 1rem;">
+                            <canvas id="piggy-chart"></canvas>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!-- ===== END PIGGY BANK TAB ===== -->
 
         </div>
     </div>

@@ -261,6 +261,7 @@ async function initApp() {
     initCharts();
     applyTimeTheme();
     renderGroceryList();
+    setupPiggyBank();
 
     showWelcomePopup();
 
@@ -1327,6 +1328,7 @@ function updateUI() {
 
     updateCharts(currentMonthExp, previousMonthNet);
     updateAnalysisUI();
+    updatePiggyBank();
 }
 
 function renderList(elementId, items, showActions = true) {
@@ -2496,4 +2498,304 @@ async function syncWithFirebase() {
         console.error("Firebase sync error:", err);
         alert("Sync failed: " + err.message);
     }
+}
+
+// ===================================================
+// VIRTUAL PIGGY BANK
+// ===================================================
+
+let piggyChart = null;
+let coinAnimInterval = null;
+
+function setupPiggyBank() {
+    updatePiggyBank();
+}
+
+function updatePiggyBank() {
+    const piggyTab = document.getElementById('tab-piggy');
+    if (!piggyTab) return;
+
+    const now = new Date();
+    const month = now.getMonth();
+    const year = now.getFullYear();
+
+    // Current month transactions
+    const monthTxs = transactions.filter(t => {
+        const d = parseLocalDate(t.date);
+        return d.getMonth() === month && d.getFullYear() === year;
+    });
+
+    const totalIncome  = monthTxs.filter(t => t.type === 'income') .reduce((s, t) => s + t.amount, 0);
+    const totalExpense = monthTxs.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
+    const savings      = totalIncome - totalExpense;
+    const savingsRate  = totalIncome > 0 ? Math.max(0, (savings / totalIncome) * 100) : 0;
+
+    // ---- Determine pig state ----
+    let state, message, borderColor;
+    if (savings < 0) {
+        state = 'crying';
+        message = "\uD83D\uDE22 You're spending more than you earn! The piggy is sad...";
+        borderColor = '#fc8181';
+    } else if (savingsRate < 10) {
+        state = 'worried';
+        message = "\uD83D\uDE1F Barely any savings this month. Can you cut back a little?";
+        borderColor = '#f6ad55';
+    } else if (savingsRate < 30) {
+        state = 'normal';
+        message = "\uD83D\uDE42 Good start! Keep saving more to make the piggy happy!";
+        borderColor = '#76c8c8';
+    } else if (savingsRate < 60) {
+        state = 'happy';
+        message = "\uD83D\uDE04 Great job! The piggy bank is getting nice and chubby! \uD83D\uDC37\uD83D\uDC95";
+        borderColor = '#68d391';
+    } else {
+        state = 'ecstatic';
+        message = "\uD83C\uDF89 WOW! Amazing savings! The piggy bank is overjoyed! \uD83C\uDF7E\uD83C\uDF8A";
+        borderColor = '#b794f4';
+    }
+
+    // ---- Update pig SVG ----
+    const pigSvg = document.getElementById('piggy-svg');
+    if (pigSvg) pigSvg.setAttribute('data-state', state);
+
+    // Scale pig body based on savings (fatter = more savings)
+    const pigBody = document.getElementById('pig-body');
+    if (pigBody) {
+        const fatScale = 1 + Math.min(savingsRate / 100, 1) * 0.3;
+        pigBody.setAttribute('ry', String(Math.round(65 * fatScale)));
+    }
+
+    // Tears
+    const tearL = document.getElementById('pig-tear-l');
+    const tearR = document.getElementById('pig-tear-r');
+    if (tearL) tearL.setAttribute('opacity', savings < 0 ? '0.9' : '0');
+    if (tearR) tearR.setAttribute('opacity', savings < 0 ? '0.9' : '0');
+
+    // Blush
+    document.querySelectorAll('.pig-blush').forEach(b => {
+        b.setAttribute('opacity', savingsRate >= 30 ? '0.35' : '0');
+    });
+
+    // Party hat
+    const hat = document.getElementById('pig-hat');
+    if (hat) hat.style.display = savingsRate >= 60 ? 'block' : 'none';
+
+    // Mouth path
+    const mouth = document.getElementById('pig-mouth');
+    if (mouth) {
+        if (savings < 0) {
+            mouth.setAttribute('d', 'M 106 140 Q 120 130 134 140'); // frown
+        } else if (savingsRate >= 30) {
+            mouth.setAttribute('d', 'M 100 130 Q 120 146 140 130'); // big smile
+        } else {
+            mouth.setAttribute('d', 'M 106 132 Q 120 142 134 132'); // normal smile
+        }
+    }
+
+    // ---- Update text values ----
+    const fmt = v => '\u20b9' + Math.abs(v).toLocaleString('en-IN', { minimumFractionDigits: 0 });
+
+    const amountEl = document.getElementById('piggy-savings-amount');
+    if (amountEl) {
+        amountEl.textContent = fmt(savings);
+        amountEl.style.color = savings >= 0 ? 'var(--accent-teal)' : 'var(--accent-red)';
+    }
+
+    const rateEl = document.getElementById('piggy-savings-rate');
+    if (rateEl) rateEl.textContent = savingsRate.toFixed(1) + '% of income';
+
+    const labelEl = document.getElementById('piggy-savings-label');
+    if (labelEl) {
+        labelEl.textContent = savings >= 0 ? 'Saved This Month' : 'Overspent This Month';
+    }
+
+    const msgEl = document.getElementById('piggy-message');
+    if (msgEl) msgEl.textContent = message;
+
+    const msgBox = document.querySelector('.piggy-message-box');
+    if (msgBox) msgBox.style.borderLeftColor = borderColor;
+
+    const fillBar = document.getElementById('piggy-fill-bar');
+    if (fillBar) fillBar.style.width = Math.min(100, savingsRate).toFixed(1) + '%';
+
+    const incEl = document.getElementById('piggy-income');
+    if (incEl) incEl.textContent = fmt(totalIncome);
+
+    const expEl = document.getElementById('piggy-expense');
+    if (expEl) expEl.textContent = fmt(totalExpense);
+
+    // ---- Compute best month & streak ----
+    const monthlyMap = {};
+    transactions.forEach(t => {
+        const d = parseLocalDate(t.date);
+        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+        if (!monthlyMap[key]) monthlyMap[key] = { inc: 0, exp: 0 };
+        if (t.type === 'income') monthlyMap[key].inc += t.amount;
+        else monthlyMap[key].exp += t.amount;
+    });
+
+    let bestMonth = null, bestSavings = -Infinity;
+    let streak = 0, prevPositive = true;
+
+    const sortedKeys = Object.keys(monthlyMap).sort();
+    sortedKeys.forEach(key => {
+        const s = monthlyMap[key].inc - monthlyMap[key].exp;
+        if (s > bestSavings) { bestSavings = s; bestMonth = key; }
+    });
+
+    // Streak: consecutive recent months with positive savings
+    for (let i = sortedKeys.length - 1; i >= 0; i--) {
+        const k = sortedKeys[i];
+        const s = monthlyMap[k].inc - monthlyMap[k].exp;
+        if (s > 0) streak++;
+        else break;
+    }
+
+    const bestEl = document.getElementById('piggy-best-month');
+    if (bestEl && bestMonth) {
+        const [y, m] = bestMonth.split('-');
+        const d = new Date(parseInt(y), parseInt(m) - 1, 1);
+        bestEl.textContent = d.toLocaleDateString('en-IN', { month: 'short', year: 'numeric' }) + ' (' + fmt(bestSavings) + ')';
+    } else if (bestEl) {
+        bestEl.textContent = '\u2014';
+    }
+
+    const streakEl = document.getElementById('piggy-streak');
+    if (streakEl) streakEl.textContent = streak + (streak === 1 ? ' month' : ' months');
+
+    // ---- Coin animation ----
+    if (savings > 0 && piggyTab.classList.contains('active')) {
+        startCoinAnimation();
+    } else {
+        stopCoinAnimation();
+    }
+
+    // ---- Update savings history chart ----
+    updatePiggyChart(monthlyMap);
+}
+
+function startCoinAnimation() {
+    const coinsEl = document.getElementById('piggy-coins');
+    if (!coinsEl || coinAnimInterval) return;
+    coinAnimInterval = setInterval(() => {
+        const tab = document.getElementById('tab-piggy');
+        if (!tab || !tab.classList.contains('active')) {
+            stopCoinAnimation();
+            return;
+        }
+        const coin = document.createElement('div');
+        coin.className = 'falling-coin';
+        coin.textContent = ['\uD83E\uDE99', '\uD83D\uDCB0', '\u2728'][Math.floor(Math.random() * 3)];
+        coin.style.left = (20 + Math.random() * 60) + '%';
+        coin.style.animationDuration = (0.9 + Math.random() * 0.7) + 's';
+        coinsEl.appendChild(coin);
+        setTimeout(() => { if (coin.parentNode) coin.remove(); }, 1800);
+    }, 700);
+}
+
+function stopCoinAnimation() {
+    if (coinAnimInterval) {
+        clearInterval(coinAnimInterval);
+        coinAnimInterval = null;
+    }
+    const coinsEl = document.getElementById('piggy-coins');
+    if (coinsEl) coinsEl.innerHTML = '';
+}
+
+function updatePiggyChart(monthlyMap) {
+    const canvas = document.getElementById('piggy-chart');
+    if (!canvas) return;
+
+    // Build last 6 months
+    const labels = [], savingsData = [], incData = [], expData = [];
+    const now = new Date();
+    for (let i = 5; i >= 0; i--) {
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+        const label = d.toLocaleDateString('en-IN', { month: 'short', year: '2-digit' });
+        labels.push(label);
+        const data = monthlyMap[key] || { inc: 0, exp: 0 };
+        incData.push(data.inc);
+        expData.push(data.exp);
+        savingsData.push(Math.max(0, data.inc - data.exp));
+    }
+
+    if (piggyChart) {
+        piggyChart.data.labels = labels;
+        piggyChart.data.datasets[0].data = savingsData;
+        piggyChart.data.datasets[1].data = incData;
+        piggyChart.data.datasets[2].data = expData;
+        piggyChart.update();
+        return;
+    }
+
+    piggyChart = new Chart(canvas.getContext('2d'), {
+        type: 'bar',
+        data: {
+            labels,
+            datasets: [
+                {
+                    label: 'Savings',
+                    data: savingsData,
+                    backgroundColor: 'rgba(118,200,200,0.7)',
+                    borderColor: '#76c8c8',
+                    borderWidth: 2,
+                    borderRadius: 8,
+                    order: 1
+                },
+                {
+                    label: 'Income',
+                    data: incData,
+                    type: 'line',
+                    borderColor: '#68d391',
+                    backgroundColor: 'rgba(104,211,145,0.1)',
+                    borderWidth: 2.5,
+                    pointRadius: 5,
+                    pointBackgroundColor: '#68d391',
+                    fill: false,
+                    tension: 0.4,
+                    order: 0
+                },
+                {
+                    label: 'Expenses',
+                    data: expData,
+                    type: 'line',
+                    borderColor: '#fc8181',
+                    backgroundColor: 'rgba(252,129,129,0.1)',
+                    borderWidth: 2.5,
+                    pointRadius: 5,
+                    pointBackgroundColor: '#fc8181',
+                    fill: false,
+                    tension: 0.4,
+                    order: 0
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(163,177,198,0.2)' },
+                    ticks: {
+                        callback: v => '\u20b9' + v.toLocaleString('en-IN')
+                    }
+                },
+                x: { grid: { display: false } }
+            },
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'bottom',
+                    labels: { usePointStyle: true, padding: 16, font: { size: 11 } }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: ctx => ctx.dataset.label + ': \u20b9' + ctx.parsed.y.toLocaleString('en-IN')
+                    }
+                }
+            }
+        }
+    });
 }
