@@ -812,45 +812,55 @@ select {
 
 
 /* ===================================================
-   VIRTUAL PIGGY BANK STYLES
+   VIRTUAL PIGGY BANK STYLES - Compact Screen-Fit
    =================================================== */
 
-.piggy-bank-wrapper {
-    padding: 1.5rem;
-    max-width: 960px;
-    margin: 0 auto;
+#tab-piggy {
     overflow-y: auto;
+    flex-direction: column;
 }
 
+.piggy-bank-wrapper {
+    padding: 0.8rem 1rem;
+    max-width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+/* Header - slim */
 .piggy-header {
     text-align: center;
-    margin-bottom: 2rem;
-    padding: 1rem;
+    padding: 0.2rem 0 0.1rem;
 }
 
 .piggy-header h2 {
-    font-size: 2rem;
+    font-size: 1.3rem;
     font-weight: 800;
     color: var(--text-heading);
-    margin-bottom: 0.5rem;
+    margin: 0 0 0.1rem 0;
 }
 
 .piggy-header p {
     color: var(--text-muted);
-    font-size: 1rem;
+    font-size: 0.8rem;
+    margin: 0;
 }
 
-/* Main two-column display */
+/* Main display: pig + info side by side */
 .piggy-main-display {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
+    grid-template-columns: auto 1fr;
+    gap: 1.2rem;
     align-items: center;
-    padding: 2.5rem 2rem;
-    border-radius: var(--radius-lg);
-    margin-bottom: 2rem;
+    padding: 1rem 1.2rem;
+    border-radius: var(--radius-md);
     position: relative;
     overflow: hidden;
+    flex-shrink: 0;
 }
 
 /* Coin rain */
@@ -866,7 +876,7 @@ select {
 .falling-coin {
     position: absolute;
     top: -40px;
-    font-size: 1.6rem;
+    font-size: 1.3rem;
     animation: coinFall linear forwards;
     z-index: 5;
     user-select: none;
@@ -887,69 +897,65 @@ select {
     z-index: 2;
 }
 
-/* Pig SVG base animation */
+/* Pig SVG - smaller to fit screen */
 .pig-svg {
-    width: 250px;
-    height: 250px;
-    filter: drop-shadow(0 10px 28px rgba(255, 143, 171, 0.35));
+    width: 160px;
+    height: 160px;
+    filter: drop-shadow(0 6px 16px rgba(255, 143, 171, 0.35));
     transition: filter 0.5s ease;
     animation: pigBreathe 3s ease-in-out infinite;
+    flex-shrink: 0;
 }
 
 @keyframes pigBreathe {
     0%, 100% { transform: scaleY(1) translateY(0px); }
-    50%       { transform: scaleY(1.04) translateY(-5px); }
+    50%       { transform: scaleY(1.04) translateY(-4px); }
 }
 
-/* State: crying */
 .pig-svg[data-state="crying"] {
     animation: pigSob 0.45s ease-in-out infinite alternate;
-    filter: drop-shadow(0 8px 24px rgba(99, 179, 237, 0.5));
+    filter: drop-shadow(0 6px 16px rgba(99, 179, 237, 0.5));
 }
 @keyframes pigSob {
     0%   { transform: rotate(-3deg) translateY(0px); }
-    100% { transform: rotate(3deg) translateY(3px); }
+    100% { transform: rotate(3deg) translateY(2px); }
 }
 
-/* State: worried */
 .pig-svg[data-state="worried"] {
     animation: pigWorried 1.8s ease-in-out infinite;
 }
 @keyframes pigWorried {
     0%, 100% { transform: translateX(0px); }
-    25%       { transform: translateX(-4px) rotate(-1deg); }
-    75%       { transform: translateX(4px) rotate(1deg); }
+    25%       { transform: translateX(-3px) rotate(-1deg); }
+    75%       { transform: translateX(3px) rotate(1deg); }
 }
 
-/* State: happy */
 .pig-svg[data-state="happy"] {
     animation: pigHappy 1.1s ease-in-out infinite;
-    filter: drop-shadow(0 10px 28px rgba(104, 211, 145, 0.4));
+    filter: drop-shadow(0 6px 18px rgba(104, 211, 145, 0.4));
 }
 @keyframes pigHappy {
     0%, 100% { transform: translateY(0px) rotate(0deg); }
-    30%       { transform: translateY(-8px) rotate(-3deg); }
-    70%       { transform: translateY(-8px) rotate(3deg); }
+    30%       { transform: translateY(-6px) rotate(-3deg); }
+    70%       { transform: translateY(-6px) rotate(3deg); }
 }
 
-/* State: ecstatic */
 .pig-svg[data-state="ecstatic"] {
     animation: pigDance 0.55s ease-in-out infinite alternate;
-    filter: drop-shadow(0 10px 36px rgba(118, 200, 200, 0.7));
+    filter: drop-shadow(0 6px 24px rgba(118, 200, 200, 0.7));
 }
 @keyframes pigDance {
     0%   { transform: translateY(0px) scale(1) rotate(-4deg); }
-    100% { transform: translateY(-12px) scale(1.07) rotate(4deg); }
+    100% { transform: translateY(-10px) scale(1.06) rotate(4deg); }
 }
 
-/* Glow under pig */
 .pig-glow {
     position: absolute;
-    bottom: -14px;
+    bottom: -10px;
     left: 50%;
     transform: translateX(-50%);
-    width: 140px;
-    height: 22px;
+    width: 100px;
+    height: 16px;
     background: radial-gradient(ellipse, rgba(255, 143, 171, 0.45), transparent 70%);
     border-radius: 50%;
     animation: glowPulse 3s ease-in-out infinite;
@@ -959,17 +965,18 @@ select {
     50%       { opacity: 1;   transform: translateX(-50%) scaleX(1.15); }
 }
 
-/* Info panel */
+/* Info panel - compact */
 .piggy-info {
     display: flex;
     flex-direction: column;
-    gap: 1.4rem;
+    gap: 0.7rem;
     z-index: 2;
+    min-width: 0;
 }
 
 .piggy-amount-display {
     text-align: center;
-    padding: 1.5rem;
+    padding: 0.7rem 1rem;
     border-radius: var(--radius-md);
     box-shadow: inset 4px 4px 10px rgba(163,177,198,0.5), inset -4px -4px 10px rgba(255,255,255,0.9);
     background: var(--neu-bg);
@@ -977,25 +984,26 @@ select {
 
 .piggy-label {
     display: block;
-    font-size: 0.78rem;
+    font-size: 0.68rem;
     color: var(--text-muted);
     text-transform: uppercase;
-    letter-spacing: 1.5px;
-    margin-bottom: 0.5rem;
+    letter-spacing: 1px;
+    margin-bottom: 0.2rem;
 }
 
 .piggy-amount {
     display: block;
-    font-size: 2.6rem;
+    font-size: 1.9rem;
     font-weight: 900;
     color: var(--accent-teal);
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.1rem;
     transition: color 0.5s ease;
+    line-height: 1.1;
 }
 
 .piggy-rate {
     display: block;
-    font-size: 1rem;
+    font-size: 0.85rem;
     font-weight: 600;
     color: var(--text-muted);
 }
@@ -1004,11 +1012,11 @@ select {
 .piggy-fullness-bar-wrapper {
     display: flex;
     flex-direction: column;
-    gap: 0.4rem;
+    gap: 0.2rem;
 }
 
 .piggy-bar-label {
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     color: var(--text-muted);
     font-weight: 600;
 }
@@ -1016,7 +1024,7 @@ select {
 .piggy-fullness-bar {
     background: var(--neu-bg);
     border-radius: 20px;
-    height: 18px;
+    height: 14px;
     box-shadow: inset 3px 3px 8px rgba(163,177,198,0.5), inset -2px -2px 6px rgba(255,255,255,0.8);
     overflow: hidden;
 }
@@ -1032,7 +1040,7 @@ select {
 .piggy-fill::after {
     content: '';
     position: absolute;
-    top: 2px; left: 8px; right: 8px; height: 5px;
+    top: 2px; left: 6px; right: 6px; height: 4px;
     background: rgba(255,255,255,0.4);
     border-radius: 10px;
 }
@@ -1040,78 +1048,78 @@ select {
 .piggy-bar-markers {
     display: flex;
     justify-content: space-between;
-    font-size: 0.7rem;
+    font-size: 0.62rem;
     color: var(--text-muted);
 }
 
-/* Message box */
+/* Message box - compact */
 .piggy-message-box {
-    padding: 1rem 1.4rem;
-    border-radius: var(--radius-md);
+    padding: 0.6rem 1rem;
+    border-radius: var(--radius-sm);
     box-shadow: var(--shadow-neu);
     background: var(--neu-bg);
     text-align: center;
-    border-left: 4px solid var(--accent-teal);
+    border-left: 3px solid var(--accent-teal);
     transition: border-color 0.5s ease;
 }
 
 .piggy-message-box p {
     color: var(--text-body);
-    font-size: 0.95rem;
-    line-height: 1.6;
+    font-size: 0.82rem;
+    line-height: 1.4;
     margin: 0;
 }
 
-/* Stats grid */
+/* Stats grid - compact 4-column */
 .piggy-stats-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 1rem;
-    margin-bottom: 2rem;
+    gap: 0.6rem;
+    flex-shrink: 0;
 }
 
 .piggy-stat-card {
-    padding: 1.4rem 1rem;
+    padding: 0.7rem 0.5rem;
     text-align: center;
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-sm);
     transition: transform 0.2s ease;
 }
 
 .piggy-stat-card:hover {
-    transform: translateY(-3px);
+    transform: translateY(-2px);
 }
 
 .piggy-stat-icon {
-    font-size: 2rem;
-    margin-bottom: 0.6rem;
+    font-size: 1.4rem;
+    margin-bottom: 0.3rem;
 }
 
 .piggy-stat-label {
     display: block;
-    font-size: 0.72rem;
+    font-size: 0.65rem;
     color: var(--text-muted);
     text-transform: uppercase;
-    letter-spacing: 0.6px;
-    margin-bottom: 0.4rem;
+    letter-spacing: 0.4px;
+    margin-bottom: 0.2rem;
 }
 
 .piggy-stat-value {
-    font-size: 1.2rem;
+    font-size: 0.95rem;
     font-weight: 800;
     color: var(--text-heading);
 }
 
-/* History chart section */
+/* History chart - compact */
 .piggy-history-section {
-    padding: 1.8rem;
-    border-radius: var(--radius-md);
-    margin-bottom: 2rem;
+    padding: 1rem 1.2rem;
+    border-radius: var(--radius-sm);
+    flex-shrink: 0;
 }
 
 .piggy-history-section h3 {
     color: var(--text-heading);
-    font-size: 1.1rem;
-    margin-bottom: 0;
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
 }
 
 /* Mobile responsive */
@@ -1119,11 +1127,13 @@ select {
     .piggy-main-display {
         grid-template-columns: 1fr;
         text-align: center;
+        gap: 0.8rem;
+        padding: 0.8rem;
     }
 
     .pig-svg {
-        width: 200px;
-        height: 200px;
+        width: 130px;
+        height: 130px;
     }
 
     .piggy-stats-grid {
@@ -1131,6 +1141,12 @@ select {
     }
 
     .piggy-amount {
-        font-size: 2rem;
+        font-size: 1.6rem;
+    }
+
+    .piggy-history-section > div {
+        height: 160px !important;
     }
 }
+
+
