@@ -226,22 +226,27 @@ function autoSuggestEmoji(name) {
     return '🏷️';
 }
 
+const SPENDLY_FIREBASE_CONFIG = {
+  "projectId": "spendly-tracker-12995",
+  "appId": "1:495737847987:web:232c38e47dc294f4aff0c6",
+  "storageBucket": "spendly-tracker-12995.firebasestorage.app",
+  "apiKey": "AIzaSyDMH90JwqFN4CtqBjzW_SXJ0rRBpAkLnfg",
+  "authDomain": "spendly-tracker-12995.firebaseapp.com",
+  "messagingSenderId": "495737847987"
+};
+
 const chartColors = ['#76c8c8', '#f6ad55', '#fc8181', '#68d391', '#f6e05e', '#b794f4', '#63b3ed', '#a0aec0'];
 
 document.addEventListener('DOMContentLoaded', async () => {
     await initApp();
 });
 
+// --- Initialization ---
 async function initApp() {
     await DataService.init();
     await migrateData();
     await loadState();
 
-    // Check for Firebase Config
-    const config = await DataService.getSetting('firebaseConfig', null);
-    if (config) {
-        try {
-            initFirebase(config);
         } catch (e) {
             console.error("Failed to initialize Firebase:", e);
         }
@@ -767,31 +772,17 @@ function setupSettings() {
     const loginBtn = document.getElementById('firebase-login-btn');
     if (loginBtn) {
         loginBtn.addEventListener('click', async () => {
-            const configText = document.getElementById('firebase-config-input').value.trim();
             const email = document.getElementById('firebase-email-input').value.trim();
             const password = document.getElementById('firebase-password-input').value;
 
-            if (!configText) {
-                showAuthError("Please paste your Firebase Config JSON first.");
-                return;
-            }
             if (!email || !password) {
                 showAuthError("Please enter both email and password.");
                 return;
             }
 
-            let configObj = null;
-            try {
-                configObj = parseFirebaseConfig(configText);
-            } catch (e) {
-                showAuthError(e.message);
-                return;
-            }
-
             try {
                 loginBtn.textContent = "Connecting...";
-                await DataService.saveSettingRaw('firebaseConfig', configObj);
-                await initFirebase(configObj);
+                await initFirebase(SPENDLY_FIREBASE_CONFIG);
                 await firebase.auth().signInWithEmailAndPassword(email, password);
                 loginBtn.textContent = "Login / Connect";
             } catch (err) {
@@ -805,14 +796,9 @@ function setupSettings() {
     const registerBtn = document.getElementById('firebase-register-btn');
     if (registerBtn) {
         registerBtn.addEventListener('click', async () => {
-            const configText = document.getElementById('firebase-config-input').value.trim();
             const email = document.getElementById('firebase-email-input').value.trim();
             const password = document.getElementById('firebase-password-input').value;
 
-            if (!configText) {
-                showAuthError("Please paste your Firebase Config JSON first.");
-                return;
-            }
             if (!email || !password) {
                 showAuthError("Please enter email and password for the new account.");
                 return;
@@ -822,18 +808,9 @@ function setupSettings() {
                 return;
             }
 
-            let configObj = null;
-            try {
-                configObj = parseFirebaseConfig(configText);
-            } catch (e) {
-                showAuthError(e.message);
-                return;
-            }
-
             try {
                 registerBtn.textContent = "Creating...";
-                await DataService.saveSettingRaw('firebaseConfig', configObj);
-                await initFirebase(configObj);
+                await initFirebase(SPENDLY_FIREBASE_CONFIG);
                 await firebase.auth().createUserWithEmailAndPassword(email, password);
                 registerBtn.textContent = "Create Account";
             } catch (err) {
