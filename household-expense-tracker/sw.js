@@ -1,4 +1,4 @@
-const CACHE_NAME = 'spendly-cache-v1';
+const CACHE_NAME = 'spendly-cache-v2';
 const urlsToCache = [
   './',
   './index.html',
@@ -8,8 +8,8 @@ const urlsToCache = [
   './icon.svg'
 ];
 
-// Install the service worker and cache all necessary files
 self.addEventListener('install', event => {
+  self.skipWaiting(); // Force new service worker to activate immediately
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
@@ -18,29 +18,37 @@ self.addEventListener('install', event => {
   );
 });
 
-// Serve cached content when offline
-self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        // Return cached version or fetch new version
-        return response || fetch(event.request);
-      })
-  );
-});
-
-// Update the service worker and clear old caches
 self.addEventListener('activate', event => {
-  const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
     caches.keys().then(cacheNames => {
       return Promise.all(
         cacheNames.map(cacheName => {
-          if (cacheWhitelist.indexOf(cacheName) === -1) {
+          if (cacheName !== CACHE_NAME) {
             return caches.delete(cacheName);
           }
         })
       );
-    })
+    }).then(() => self.clients.claim()) // Take control of all clients immediately
+  );
+});
+
+// Network-First strategy
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    fetch(event.request)
+      .then(response => {
+        // Update cache with the latest version
+        if (response && response.status === 200) {
+          const responseClone = response.clone();
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put(event.request, responseClone);
+          });
+        }
+        return response;
+      })
+      .catch(() => {
+        // Fallback to cache if offline
+        return caches.match(event.request);
+      })
   );
 });
