@@ -247,9 +247,10 @@ async function initApp() {
     await migrateData();
     await loadState();
 
-        } catch (e) {
-            console.error("Failed to initialize Firebase:", e);
-        }
+    try {
+        initFirebase(SPENDLY_FIREBASE_CONFIG);
+    } catch (e) {
+        console.error("Failed to initialize Firebase:", e);
     }
 
     updateCategoryDropdowns();
