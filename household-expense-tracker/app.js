@@ -783,7 +783,6 @@ function setupSettings() {
 
             try {
                 loginBtn.textContent = "Connecting...";
-                await initFirebase(SPENDLY_FIREBASE_CONFIG);
                 await firebase.auth().signInWithEmailAndPassword(email, password);
                 loginBtn.textContent = "Login / Connect";
             } catch (err) {
@@ -811,7 +810,6 @@ function setupSettings() {
 
             try {
                 registerBtn.textContent = "Creating...";
-                await initFirebase(SPENDLY_FIREBASE_CONFIG);
                 await firebase.auth().createUserWithEmailAndPassword(email, password);
                 registerBtn.textContent = "Create Account";
             } catch (err) {
