@@ -1,6 +1,6 @@
 {
   "projects": {
-    "firebase deploy --only hostingcl": "spendly-tracker-12995"
+    "default": "spendly-tracker-12995"
   },
   "targets": {},
   "etags": {}

@@ -948,37 +948,99 @@ function setupSettings() {
     });
 
     // Backup & Restore
+    async function triggerExportBackup(isAuto = false) {
+        try {
+            const data = {
+                transactions: await DataService.getAll('transactions'),
+                groceryItems: await DataService.getAll('groceryItems'),
+                milkTracker: await DataService.getAll('milkTracker'),
+                settings: {
+                    categoryBudgets: await DataService.getSetting('categoryBudgets', {}),
+                    userName: await DataService.getSetting('userName', 'Rojaa'),
+                    startingBalance: await DataService.getSetting('startingBalance', 0),
+                    customCategories: await DataService.getSetting('customCategories', {})
+                }
+            };
+
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            const prefix = isAuto ? 'spendly_auto_backup_' : 'spendly_backup_';
+            a.download = `${prefix}${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        } catch (err) {
+            console.error('Export failed:', err);
+            if (!isAuto) alert('Failed to export data.');
+        }
+    }
+
     const exportBtn = document.getElementById('export-btn');
     if (exportBtn) {
-        exportBtn.addEventListener('click', async () => {
-            try {
-                const data = {
-                    transactions: await DataService.getAll('transactions'),
-                    groceryItems: await DataService.getAll('groceryItems'),
-                    milkTracker: await DataService.getAll('milkTracker'),
-                    settings: {
-                        categoryBudgets: await DataService.getSetting('categoryBudgets', {}),
-                        userName: await DataService.getSetting('userName', 'Rojaa'),
-                        startingBalance: await DataService.getSetting('startingBalance', 0),
-                        customCategories: await DataService.getSetting('customCategories', {})
-                    }
-                };
+        exportBtn.addEventListener('click', () => triggerExportBackup(false));
+    }
 
-                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `spendly_backup_${new Date().toISOString().split('T')[0]}.json`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-            } catch (err) {
-                console.error('Export failed:', err);
-                alert('Failed to export data.');
+    // Auto Backup Settings
+    const autoBackupToggle = document.getElementById('auto-backup-toggle');
+    const autoBackupTimeInput = document.getElementById('auto-backup-time');
+    const saveAutoBackupBtn = document.getElementById('save-auto-backup-btn');
+
+    if (autoBackupToggle && autoBackupTimeInput && saveAutoBackupBtn) {
+        DataService.getSetting('autoBackupEnabled', false).then(enabled => {
+            autoBackupToggle.checked = enabled;
+            autoBackupTimeInput.disabled = !enabled;
+            saveAutoBackupBtn.disabled = !enabled;
+        });
+        DataService.getSetting('autoBackupTime', '23:00').then(time => {
+            autoBackupTimeInput.value = time;
+        });
+
+        autoBackupToggle.addEventListener('change', async (e) => {
+            const enabled = e.target.checked;
+            autoBackupTimeInput.disabled = !enabled;
+            saveAutoBackupBtn.disabled = !enabled;
+            await DataService.saveSetting('autoBackupEnabled', enabled);
+            if (!enabled) {
+                alert('Auto Backup disabled.');
             }
         });
+
+        saveAutoBackupBtn.addEventListener('click', async () => {
+            if (!autoBackupTimeInput.value) {
+                alert('Please select a valid time.');
+                return;
+            }
+            await DataService.saveSetting('autoBackupTime', autoBackupTimeInput.value);
+            alert('Auto Backup time saved!');
+        });
     }
+
+    // Auto Backup Scheduler Loop
+    setInterval(async () => {
+        const enabled = await DataService.getSetting('autoBackupEnabled', false);
+        if (!enabled) return;
+
+        const scheduledTimeStr = await DataService.getSetting('autoBackupTime', '23:00');
+        if (!scheduledTimeStr) return;
+
+        const now = new Date();
+        const currentHour = String(now.getHours()).padStart(2, '0');
+        const currentMin = String(now.getMinutes()).padStart(2, '0');
+        const currentTimeStr = `${currentHour}:${currentMin}`;
+
+        if (currentTimeStr === scheduledTimeStr) {
+            const todayStr = now.toISOString().split('T')[0];
+            const lastAutoBackupDate = await DataService.getSetting('lastAutoBackupDate', '');
+            
+            if (lastAutoBackupDate !== todayStr) {
+                await DataService.saveSetting('lastAutoBackupDate', todayStr);
+                triggerExportBackup(true);
+            }
+        }
+    }, 60000);
 
     const importBtnTrigger = document.getElementById('import-btn-trigger');
     const importFile = document.getElementById('import-file');
@@ -1256,6 +1318,10 @@ function updateUI() {
     // Calculate Total Monthly Budget
     const monthlyBudget = Object.values(categoryBudgets).reduce((sum, val) => sum + val, 0);
     const effectiveBudget = monthlyBudget;
+
+    if (previousMonthNet < 0) {
+        previousMonthNet = 0;
+    }
 
     // Header Updates
     const leftoverEl = document.getElementById('previous-leftover');
@@ -2416,6 +2482,8 @@ async function initFirebase(config) {
     bindFirebaseAuth();
 }
 
+let firebaseListeners = [];
+
 function bindFirebaseAuth() {
     firebase.auth().onAuthStateChanged(async (user) => {
         const loggedOutEl = document.getElementById('firebase-logged-out');
@@ -2427,11 +2495,137 @@ function bindFirebaseAuth() {
             if (loggedInEl) loggedInEl.style.display = 'block';
             if (statusEl) statusEl.textContent = `Connected as ${user.email}`;
             await syncWithFirebase();
+            setupFirebaseListeners();
         } else {
             if (loggedOutEl) loggedOutEl.style.display = 'block';
             if (loggedInEl) loggedInEl.style.display = 'none';
+            firebaseListeners.forEach(unsub => unsub());
+            firebaseListeners = [];
         }
     });
+}
+
+function setupFirebaseListeners() {
+    if (typeof firebase === 'undefined' || !firebase.apps.length || !firebase.auth().currentUser) return;
+    const uid = firebase.auth().currentUser.uid;
+    const dbRef = firebase.firestore();
+
+    // Clear existing listeners
+    firebaseListeners.forEach(unsub => unsub());
+    firebaseListeners = [];
+
+    // Transactions listener
+    firebaseListeners.push(
+        dbRef.collection('users').doc(uid).collection('transactions').onSnapshot((snapshot) => {
+            let changed = false;
+            snapshot.docChanges().forEach(change => {
+                const data = change.doc.data();
+                if (change.type === 'added' || change.type === 'modified') {
+                    const idx = transactions.findIndex(t => t.id === data.id);
+                    if (idx > -1) {
+                        if (JSON.stringify(transactions[idx]) !== JSON.stringify(data)) {
+                            transactions[idx] = data;
+                            DataService.putRaw('transactions', data);
+                            changed = true;
+                        }
+                    } else {
+                        transactions.push(data);
+                        DataService.putRaw('transactions', data);
+                        changed = true;
+                    }
+                } else if (change.type === 'removed') {
+                    transactions = transactions.filter(t => t.id !== data.id);
+                    DataService.deleteRaw('transactions', data.id);
+                    changed = true;
+                }
+            });
+            if (changed) {
+                updateUI();
+            }
+        })
+    );
+
+    // Grocery Items listener
+    firebaseListeners.push(
+        dbRef.collection('users').doc(uid).collection('groceryItems').onSnapshot((snapshot) => {
+            let changed = false;
+            snapshot.docChanges().forEach(change => {
+                const data = change.doc.data();
+                if (change.type === 'added' || change.type === 'modified') {
+                    const idx = groceryItems.findIndex(i => i.id === data.id);
+                    if (idx > -1) {
+                        if (JSON.stringify(groceryItems[idx]) !== JSON.stringify(data)) {
+                            groceryItems[idx] = data;
+                            DataService.putRaw('groceryItems', data);
+                            changed = true;
+                        }
+                    } else {
+                        groceryItems.push(data);
+                        DataService.putRaw('groceryItems', data);
+                        changed = true;
+                    }
+                } else if (change.type === 'removed') {
+                    groceryItems = groceryItems.filter(i => i.id !== data.id);
+                    DataService.deleteRaw('groceryItems', data.id);
+                    changed = true;
+                }
+            });
+            if (changed) {
+                renderGroceryList();
+            }
+        })
+    );
+
+    // Milk Tracker listener
+    firebaseListeners.push(
+        dbRef.collection('users').doc(uid).collection('milkTracker').onSnapshot((snapshot) => {
+            let changed = false;
+            snapshot.docChanges().forEach(change => {
+                const data = change.doc.data();
+                if (change.type === 'added' || change.type === 'modified') {
+                    DataService.putRaw('milkTracker', data);
+                    changed = true;
+                } else if (change.type === 'removed') {
+                    DataService.deleteRaw('milkTracker', data.id);
+                    changed = true;
+                }
+            });
+            if (changed) {
+                const activeTab = document.querySelector('.nav-btn.active');
+                if (activeTab && activeTab.dataset.tab === 'milk') {
+                    loadAndRenderMilkTracker();
+                }
+            }
+        })
+    );
+
+    // Settings listener
+    firebaseListeners.push(
+        dbRef.collection('users').doc(uid).collection('settings').onSnapshot((snapshot) => {
+            snapshot.docChanges().forEach(async change => {
+                const key = change.doc.id;
+                const cloudVal = change.doc.data().value;
+                if (change.type === 'added' || change.type === 'modified') {
+                    const localVal = await DataService.getSettingRaw(key);
+                    if (JSON.stringify(localVal) !== JSON.stringify(cloudVal)) {
+                        await DataService.saveSettingRaw(key, cloudVal);
+                        
+                        if (key === 'categoryBudgets') categoryBudgets = cloudVal;
+                        if (key === 'userName') {
+                            userName = cloudVal;
+                            updateHeader();
+                        }
+                        if (key === 'startingBalance') startingBalance = cloudVal;
+                        if (key === 'customCategories') {
+                            categoryIcons = { ...categoryIcons, ...cloudVal };
+                            updateCategoryDropdowns();
+                        }
+                        updateUI();
+                    }
+                }
+            });
+        })
+    );
 }
 
 async function syncWithFirebase() {
