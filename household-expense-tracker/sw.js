@@ -1,4 +1,4 @@
-const CACHE_NAME = 'spendly-cache-v4';
+const CACHE_NAME = 'spendly-cache-v5';
 const urlsToCache = [
   './',
   './index.html',
