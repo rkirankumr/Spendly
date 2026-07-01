@@ -363,7 +363,8 @@ function applyTimeTheme() {
     // Night theme between 6 PM (18) and 6 AM (6)
     const isNight = hour < 6 || hour >= 18;
 
-    if (isNight) {
+    // Don't apply dark theme if playful theme is active
+    if (isNight && !document.body.classList.contains('theme-playful')) {
         document.body.classList.add('dark-theme');
     } else {
         document.body.classList.remove('dark-theme');
@@ -3180,3 +3181,35 @@ function updatePiggyChart(monthlyMap) {
         }
     });
 }
+
+// ===================================================
+// THEME SWITCHER
+// ===================================================
+
+document.addEventListener('DOMContentLoaded', async () => {
+    const themeBtn = document.getElementById('theme-toggle-btn');
+    if (!themeBtn) return;
+    
+    // We'll just wait for DataService to init
+    setTimeout(async () => {
+        let isPlayful = await DataService.getSetting('playfulTheme', false);
+        
+        const applyPlayfulTheme = (playful) => {
+            if (playful) {
+                document.body.classList.add('theme-playful');
+            } else {
+                document.body.classList.remove('theme-playful');
+            }
+            applyTimeTheme(); // Re-apply dark mode rules
+        };
+
+        // Apply initially
+        applyPlayfulTheme(isPlayful);
+
+        themeBtn.addEventListener('click', async () => {
+            isPlayful = !document.body.classList.contains('theme-playful');
+            applyPlayfulTheme(isPlayful);
+            await DataService.saveSetting('playfulTheme', isPlayful);
+        });
+    }, 1000); // 1 second delay to ensure DB is loaded
+});

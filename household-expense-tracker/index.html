@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
@@ -61,6 +61,7 @@
                             class="nav-text">Settings</span></button></li>
                 <li><button class="nav-btn" data-tab="piggy" title="Piggy Bank">🐷 <span
                             class="nav-text">Piggy Bank</span></button></li>
+                <li style="margin-top: 2rem;"><button id="theme-toggle-btn" class="nav-btn" title="Toggle Theme">🎨 <span class="nav-text">Switch Theme</span></button></li>
             </ul>
         </nav>
 
@@ -1072,7 +1073,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    <script src="app.js?v=6"></script>
+    <script src="app.js?v=7"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {

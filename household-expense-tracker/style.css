@@ -31,6 +31,52 @@ body.dark-theme {
     --accent-teal: #81e6d9;
 }
 
+body.theme-playful {
+    --bg-color: #fdfbf7;
+    --text-main: #5c5c5c;
+    --text-muted: #94a3b8;
+    --text-heading: #333333;
+    
+    --accent-teal: #94d3c6;
+    --accent-orange: #ffe08a;
+    --accent-red: #ffa3a3;
+    --accent-green: #a7f3d0;
+    
+    --shadow-light: transparent;
+    --shadow-dark: rgba(0, 0, 0, 0.08);
+    
+    --radius-sm: 16px;
+    --radius-md: 24px;
+    --radius-lg: 32px;
+    
+    --font: 'Nunito', 'Outfit', sans-serif;
+}
+
+body.theme-playful .neu-flat {
+    box-shadow: 4px 4px 0px rgba(0,0,0,0.08);
+    border: 2px solid #eaeaea;
+}
+
+body.theme-playful .neu-pressed {
+    box-shadow: inset 4px 4px 8px rgba(0,0,0,0.05);
+    border: 2px solid #eaeaea;
+}
+
+body.theme-playful .neu-btn {
+    box-shadow: 4px 4px 0px rgba(0,0,0,0.08);
+    border: 2px solid #eaeaea;
+}
+
+body.theme-playful .neu-btn:active, body.theme-playful .neu-btn.active {
+    box-shadow: 1px 1px 0px rgba(0,0,0,0.08);
+    transform: translate(3px, 3px);
+}
+
+body.theme-playful header .neu-btn {
+    box-shadow: 2px 2px 0px rgba(0,0,0,0.08);
+    border: 2px solid #eaeaea;
+}
+
 * {
     margin: 0;
     padding: 0;
