@@ -2436,7 +2436,7 @@ function generateReport() {
     }).join('');
 }
 
-function generateLeftoverHistory() {
+async function generateLeftoverHistory() {
     const tbody = document.getElementById('leftover-history-table-body');
     if (!tbody) return;
 
@@ -2459,11 +2459,12 @@ function generateLeftoverHistory() {
     });
 
     const monthlyBudget = Object.values(categoryBudgets).reduce((sum, val) => sum + val, 0);
+    const monthlyAddedMoney = await DataService.getSetting('monthlyAddedMoney', {});
 
     const keys = Object.keys(monthlyData).sort((a, b) => b.localeCompare(a)); // sort descending
 
     if (keys.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 2rem;">No monthly data available yet.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 2rem;">No monthly data available yet.</td></tr>`;
         return;
     }
 
@@ -2477,8 +2478,14 @@ function generateLeftoverHistory() {
         const limitOrIncome = data.inc > 0 ? data.inc : monthlyBudget;
         const leftover = limitOrIncome - data.exp;
 
+        const addedMoney = parseFloat(monthlyAddedMoney[key]) || 0;
+        const totalLeftover = leftover - addedMoney; // As per user spec
+
         const leftoverColor = leftover < 0 ? 'var(--accent-red)' : 'var(--accent-green)';
         const leftoverPrefix = leftover < 0 ? '-' : '';
+
+        const totalColor = totalLeftover < 0 ? 'var(--accent-red)' : 'var(--accent-green)';
+        const totalPrefix = totalLeftover < 0 ? '-' : '';
 
         return `
             <tr>
@@ -2486,9 +2493,25 @@ function generateLeftoverHistory() {
                 <td style="text-align: right; color: var(--text-heading);">₹${limitOrIncome.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
                 <td style="text-align: right; color: var(--accent-orange);">₹${data.exp.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
                 <td style="text-align: right; font-weight: 600; color: ${leftoverColor};">${leftoverPrefix}₹${Math.abs(leftover).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                <td style="text-align: right;">
+                    <input type="number" class="neu-pressed added-money-input" data-month="${key}" value="${addedMoney}" style="width: 80px; padding: 0.3rem; text-align: right; font-size: 0.9rem; border-radius: 4px; border: none;">
+                </td>
+                <td style="text-align: right; font-weight: 600; color: ${totalColor};">${totalPrefix}₹${Math.abs(totalLeftover).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
             </tr>
         `;
     }).join('');
+
+    // Attach event listeners for Added Money inputs
+    document.querySelectorAll('.added-money-input').forEach(input => {
+        input.addEventListener('change', async (e) => {
+            const monthKey = e.target.dataset.month;
+            const val = parseFloat(e.target.value) || 0;
+            const currentAdded = await DataService.getSetting('monthlyAddedMoney', {});
+            currentAdded[monthKey] = val;
+            await DataService.saveSetting('monthlyAddedMoney', currentAdded);
+            generateLeftoverHistory(); // re-render
+        });
+    });
 }
 
 function exportReportToCSV() {
