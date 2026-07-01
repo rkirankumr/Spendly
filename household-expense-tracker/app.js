@@ -169,6 +169,7 @@ let groceryItems = [];
 let categoryBudgets = {};
 let userName = 'Rojaa';
 let startingBalance = 0;
+let monthlyAddedMoney = {};
 let editTransactionId = null;
 let tabBeforeEdit = null;
 
@@ -351,6 +352,7 @@ async function loadState() {
     categoryBudgets = await DataService.getSetting('categoryBudgets', {});
     userName = await DataService.getSetting('userName', 'Rojaa');
     startingBalance = await DataService.getSetting('startingBalance', 0);
+    monthlyAddedMoney = await DataService.getSetting('monthlyAddedMoney', {});
 
     const customCats = await DataService.getSetting('customCategories', {});
     categoryIcons = { ...categoryIcons, ...customCats };
@@ -1289,29 +1291,99 @@ function checkGroceryAlerts() {
     }
 }
 
+// --- Rolling Leftover Logic ---
+function calculateRollingLeftovers() {
+    const monthlyData = {};
+    transactions.forEach(t => {
+        const d = parseLocalDate(t.date);
+        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+        if (!monthlyData[key]) {
+            monthlyData[key] = { inc: 0, exp: 0, year: d.getFullYear(), month: d.getMonth() };
+        }
+        if (t.type === 'income') {
+            monthlyData[key].inc += t.amount;
+        } else {
+            monthlyData[key].exp += t.amount;
+        }
+    });
+
+    const monthlyBudget = Object.values(categoryBudgets).reduce((sum, val) => sum + val, 0);
+    const keys = Object.keys(monthlyData).sort((a, b) => a.localeCompare(b)); // Ascending
+
+    let carryOver = startingBalance;
+    const history = {};
+
+    keys.forEach(key => {
+        const data = monthlyData[key];
+        const limitOrIncome = data.inc > 0 ? data.inc : monthlyBudget;
+        
+        // Apply carryOver to leftover
+        const leftover = limitOrIncome - data.exp + carryOver;
+
+        // Apply added money
+        const added = parseFloat(monthlyAddedMoney[key]) || 0;
+        const totalLeftover = leftover + added;
+
+        history[key] = {
+            ...data,
+            limitOrIncome,
+            leftover,
+            added,
+            totalLeftover
+        };
+
+        carryOver = totalLeftover;
+    });
+
+    return { history, finalCarryOver: carryOver };
+}
+
 function updateUI() {
     checkGroceryAlerts();
 
     let currentMonthInc = 0, currentMonthExp = 0;
-    let previousMonthNet = startingBalance;
     const expenses = [], incomes = [];
     const spentPerCategory = {};
+
+    // Get rolling calculations
+    const { history } = calculateRollingLeftovers();
+    
+    // Determine previousMonthNet by finding the carry over from the month exactly prior to selected
+    let previousMonthNet = startingBalance;
+    // Build the key for the month prior to selected month
+    let prevM = selectedMonth - 1;
+    let prevY = selectedYear;
+    if (prevM < 0) {
+        prevM = 11;
+        prevY -= 1;
+    }
+    const prevKey = `${prevY}-${String(prevM + 1).padStart(2, '0')}`;
+
+    // If the exact previous month exists, use its totalLeftover. 
+    // Otherwise, we need the most recent month before the selected date.
+    const keysBeforeSelected = Object.keys(history).filter(k => {
+        const [y, m] = k.split('-');
+        if (parseInt(y) < selectedYear) return true;
+        if (parseInt(y) === selectedYear && parseInt(m) - 1 < selectedMonth) return true;
+        return false;
+    }).sort((a, b) => b.localeCompare(a));
+
+    if (keysBeforeSelected.length > 0) {
+        previousMonthNet = history[keysBeforeSelected[0]].totalLeftover;
+    }
 
     transactions.forEach(t => {
         const d = parseLocalDate(t.date);
         const isCurrentMonth = d.getMonth() === selectedMonth && d.getFullYear() === selectedYear;
-        const isBeforeThisMonth = d.getFullYear() < selectedYear || (d.getFullYear() === selectedYear && d.getMonth() < selectedMonth);
 
         if (t.type === 'income') {
             if (isCurrentMonth) currentMonthInc += t.amount;
-            if (isBeforeThisMonth) previousMonthNet += t.amount;
             incomes.push(t);
         } else {
             if (isCurrentMonth) {
                 currentMonthExp += t.amount;
                 spentPerCategory[t.category] = (spentPerCategory[t.category] || 0) + t.amount;
             }
-            if (isBeforeThisMonth) previousMonthNet -= t.amount;
             expenses.push(t);
         }
     });
@@ -1319,10 +1391,6 @@ function updateUI() {
     // Calculate Total Monthly Budget
     const monthlyBudget = Object.values(categoryBudgets).reduce((sum, val) => sum + val, 0);
     const effectiveBudget = monthlyBudget;
-
-    if (previousMonthNet < 0) {
-        previousMonthNet = 0;
-    }
 
     // Header Updates
     const leftoverEl = document.getElementById('previous-leftover');
@@ -2440,28 +2508,8 @@ async function generateLeftoverHistory() {
     const tbody = document.getElementById('leftover-history-table-body');
     if (!tbody) return;
 
-    // Group transactions by month (YYYY-MM)
-    const monthlyData = {};
-
-    transactions.forEach(t => {
-        const d = parseLocalDate(t.date);
-        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-        
-        if (!monthlyData[key]) {
-            monthlyData[key] = { inc: 0, exp: 0, year: d.getFullYear(), month: d.getMonth() };
-        }
-        
-        if (t.type === 'income') {
-            monthlyData[key].inc += t.amount;
-        } else {
-            monthlyData[key].exp += t.amount;
-        }
-    });
-
-    const monthlyBudget = Object.values(categoryBudgets).reduce((sum, val) => sum + val, 0);
-    const monthlyAddedMoney = await DataService.getSetting('monthlyAddedMoney', {});
-
-    const keys = Object.keys(monthlyData).sort((a, b) => b.localeCompare(a)); // sort descending
+    const { history } = calculateRollingLeftovers();
+    const keys = Object.keys(history).sort((a, b) => b.localeCompare(a)); // sort descending for display
 
     if (keys.length === 0) {
         tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 2rem;">No monthly data available yet.</td></tr>`;
@@ -2471,47 +2519,50 @@ async function generateLeftoverHistory() {
     const monthNamesShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
     tbody.innerHTML = keys.map(key => {
-        const data = monthlyData[key];
+        const data = history[key];
         const displayDate = `${monthNamesShort[data.month]} ${data.year}`;
-        
-        // If income is present, use it as the limit, otherwise fallback to the fixed monthly budget
-        const limitOrIncome = data.inc > 0 ? data.inc : monthlyBudget;
-        const leftover = limitOrIncome - data.exp;
 
-        const addedMoney = parseFloat(monthlyAddedMoney[key]) || 0;
-        const totalLeftover = leftover - addedMoney; // As per user spec
+        const leftoverColor = data.leftover < 0 ? 'var(--accent-red)' : 'var(--accent-green)';
+        const leftoverPrefix = data.leftover < 0 ? '-' : '';
 
-        const leftoverColor = leftover < 0 ? 'var(--accent-red)' : 'var(--accent-green)';
-        const leftoverPrefix = leftover < 0 ? '-' : '';
-
-        const totalColor = totalLeftover < 0 ? 'var(--accent-red)' : 'var(--accent-green)';
-        const totalPrefix = totalLeftover < 0 ? '-' : '';
+        const totalColor = data.totalLeftover < 0 ? 'var(--accent-red)' : 'var(--accent-green)';
+        const totalPrefix = data.totalLeftover < 0 ? '-' : '';
 
         return `
             <tr>
                 <td><strong>${displayDate}</strong></td>
-                <td style="text-align: right; color: var(--text-heading);">₹${limitOrIncome.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                <td style="text-align: right; color: var(--text-heading);">₹${data.limitOrIncome.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
                 <td style="text-align: right; color: var(--accent-orange);">₹${data.exp.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
-                <td style="text-align: right; font-weight: 600; color: ${leftoverColor};">${leftoverPrefix}₹${Math.abs(leftover).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                <td style="text-align: right; font-weight: 600; color: ${leftoverColor};">${leftoverPrefix}₹${Math.abs(data.leftover).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
                 <td style="text-align: right;">
-                    <input type="number" class="neu-pressed added-money-input" data-month="${key}" value="${addedMoney}" style="width: 80px; padding: 0.3rem; text-align: right; font-size: 0.9rem; border-radius: 4px; border: none;">
+                    <input type="number" class="neu-pressed added-money-input" data-month="${key}" value="${data.added}" style="width: 80px; padding: 0.3rem; text-align: right; font-size: 0.9rem; border-radius: 4px; border: none;">
                 </td>
-                <td style="text-align: right; font-weight: 600; color: ${totalColor};">${totalPrefix}₹${Math.abs(totalLeftover).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                <td style="text-align: right; font-weight: 600; color: ${totalColor};">${totalPrefix}₹${Math.abs(data.totalLeftover).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
             </tr>
         `;
     }).join('');
 
-    // Attach event listeners for Added Money inputs
-    document.querySelectorAll('.added-money-input').forEach(input => {
-        input.addEventListener('change', async (e) => {
-            const monthKey = e.target.dataset.month;
-            const val = parseFloat(e.target.value) || 0;
+    // Wire Save Changes Button
+    const saveBtn = document.getElementById('save-leftover-history-btn');
+    if (saveBtn) {
+        // Remove old listeners to prevent duplicates
+        const newSaveBtn = saveBtn.cloneNode(true);
+        saveBtn.parentNode.replaceChild(newSaveBtn, saveBtn);
+
+        newSaveBtn.addEventListener('click', async () => {
             const currentAdded = await DataService.getSetting('monthlyAddedMoney', {});
-            currentAdded[monthKey] = val;
+            document.querySelectorAll('.added-money-input').forEach(input => {
+                const monthKey = input.dataset.month;
+                const val = parseFloat(input.value) || 0;
+                currentAdded[monthKey] = val;
+            });
+            monthlyAddedMoney = currentAdded; // Update global state
             await DataService.saveSetting('monthlyAddedMoney', currentAdded);
-            generateLeftoverHistory(); // re-render
+            generateLeftoverHistory(); // re-render history table
+            updateUI(); // re-render dashboard to sync previousMonthNet
+            showToast("Leftover history saved!");
         });
-    });
+    }
 }
 
 function exportReportToCSV() {
