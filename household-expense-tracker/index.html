@@ -643,10 +643,18 @@
 
             <!-- 8. REPORT TAB -->
             <div id="tab-report" class="tab-content" style="flex-direction: column; height: 100%; overflow-y: auto;">
-                <!-- Filter Card -->
-                <div class="overview-card neu-flat" style="margin-bottom: 1.5rem; padding: 1.5rem;">
-                    <h3 style="color: var(--text-heading); font-size: 1.2rem; margin-bottom: 1rem;">Generate Expense
-                        Report</h3>
+                
+                <!-- Report Sub-tabs -->
+                <div class="report-sub-tabs" style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-shrink: 0;">
+                    <button class="neu-btn active report-sub-tab-btn" data-sub-tab="detailed" style="padding: 0.6rem 1.2rem;">📋 Detailed Report</button>
+                    <button class="neu-btn report-sub-tab-btn" data-sub-tab="leftover" style="padding: 0.6rem 1.2rem;">💰 Leftover History</button>
+                </div>
+
+                <!-- Detailed Report Panel -->
+                <div id="report-detailed-panel" class="report-panel active">
+                    <!-- Filter Card -->
+                    <div class="overview-card neu-flat" style="margin-bottom: 1.5rem; padding: 1.5rem;">
+                        <h3 style="color: var(--text-heading); font-size: 1.2rem; margin-bottom: 1rem;">Generate Expense Report</h3>
                     <div class="report-filters">
                         <div class="form-group" style="margin-bottom: 0;">
                             <label>Start Date</label>
@@ -740,6 +748,29 @@
                         </table>
                     </div>
                 </div>
+                </div> <!-- End Detailed Report Panel -->
+
+                <!-- Leftover History Panel -->
+                <div id="report-leftover-panel" class="report-panel" style="display: none;">
+                    <div class="neu-flat" style="padding: 1.5rem; margin-bottom: 2rem;">
+                        <h3 style="color: var(--text-heading); font-size: 1.2rem; margin-bottom: 1.5rem;">Monthly Leftover History</h3>
+                        <div class="report-table-container">
+                            <table class="report-table">
+                                <thead>
+                                    <tr>
+                                        <th>Month</th>
+                                        <th style="text-align: right;">Limit / Income (₹)</th>
+                                        <th style="text-align: right;">Expenses (₹)</th>
+                                        <th style="text-align: right;">Leftover (₹)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="leftover-history-table-body">
+                                    <!-- Injected via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div> <!-- End Leftover History Panel -->
             </div>
 
             <!-- 6. SETTINGS TAB -->
@@ -1034,7 +1065,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    <script src="app2.js"></script>
+    <script src="app.js?v=4"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {

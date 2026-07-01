@@ -1,9 +1,9 @@
-const CACHE_NAME = 'spendly-cache-v7';
+const CACHE_NAME = 'spendly-cache-v8';
 const urlsToCache = [
   './',
   './index.html',
   './style.css',
-  './app2.js',
+  './app.js?v=4',
   './manifest.json',
   './icon.svg'
 ];

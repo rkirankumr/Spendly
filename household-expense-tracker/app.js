@@ -514,6 +514,7 @@ function setupTabs() {
             if (btn.dataset.tab === 'report') {
                 updateReportCategories();
                 generateReport();
+                generateLeftoverHistory();
             }
             if (btn.dataset.tab === 'piggy') {
                 updatePiggyBank();
@@ -2229,6 +2230,29 @@ async function updateMilkSummaryAndBreakdown(milkData) {
 
 // --- Report Tab Logic ---
 function setupReportTab() {
+    const reportSubTabBtns = document.querySelectorAll('.report-sub-tab-btn');
+    const reportPanels = document.querySelectorAll('.report-panel');
+    reportSubTabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            reportSubTabBtns.forEach(b => b.classList.remove('active'));
+            reportPanels.forEach(p => {
+                p.style.display = 'none';
+                p.classList.remove('active');
+            });
+            
+            btn.classList.add('active');
+            const targetPanel = document.getElementById(`report-${btn.dataset.subTab}-panel`);
+            if (targetPanel) {
+                targetPanel.style.display = 'block';
+                targetPanel.classList.add('active');
+            }
+
+            if (btn.dataset.subTab === 'leftover') {
+                generateLeftoverHistory();
+            }
+        });
+    });
+
     const startInput = document.getElementById('report-start-date');
     const endInput = document.getElementById('report-end-date');
     if (!startInput || !endInput) return;
@@ -2407,6 +2431,61 @@ function generateReport() {
                 <td><span style="display: flex; align-items: center; gap: 0.5rem;"><span>${icon}</span> <span>${t.category}</span></span></td>
                 <td>${t.note || '—'}</td>
                 <td style="text-align: right; font-weight: 600; color: var(--accent-red);">-₹${t.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function generateLeftoverHistory() {
+    const tbody = document.getElementById('leftover-history-table-body');
+    if (!tbody) return;
+
+    // Group transactions by month (YYYY-MM)
+    const monthlyData = {};
+
+    transactions.forEach(t => {
+        const d = parseLocalDate(t.date);
+        const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+        
+        if (!monthlyData[key]) {
+            monthlyData[key] = { inc: 0, exp: 0, year: d.getFullYear(), month: d.getMonth() };
+        }
+        
+        if (t.type === 'income') {
+            monthlyData[key].inc += t.amount;
+        } else {
+            monthlyData[key].exp += t.amount;
+        }
+    });
+
+    const monthlyBudget = Object.values(categoryBudgets).reduce((sum, val) => sum + val, 0);
+
+    const keys = Object.keys(monthlyData).sort((a, b) => b.localeCompare(a)); // sort descending
+
+    if (keys.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 2rem;">No monthly data available yet.</td></tr>`;
+        return;
+    }
+
+    const monthNamesShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    tbody.innerHTML = keys.map(key => {
+        const data = monthlyData[key];
+        const displayDate = `${monthNamesShort[data.month]} ${data.year}`;
+        
+        // If income is present, use it as the limit, otherwise fallback to the fixed monthly budget
+        const limitOrIncome = data.inc > 0 ? data.inc : monthlyBudget;
+        const leftover = limitOrIncome - data.exp;
+
+        const leftoverColor = leftover < 0 ? 'var(--accent-red)' : 'var(--accent-green)';
+        const leftoverPrefix = leftover < 0 ? '-' : '';
+
+        return `
+            <tr>
+                <td><strong>${displayDate}</strong></td>
+                <td style="text-align: right; color: var(--text-heading);">₹${limitOrIncome.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                <td style="text-align: right; color: var(--accent-orange);">₹${data.exp.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                <td style="text-align: right; font-weight: 600; color: ${leftoverColor};">${leftoverPrefix}₹${Math.abs(leftover).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
             </tr>
         `;
     }).join('');
