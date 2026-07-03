@@ -649,6 +649,7 @@
                 <div class="report-sub-tabs" style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-shrink: 0;">
                     <button class="neu-btn active report-sub-tab-btn" data-sub-tab="detailed" style="padding: 0.6rem 1.2rem;">📋 Detailed Report</button>
                     <button class="neu-btn report-sub-tab-btn" data-sub-tab="leftover" style="padding: 0.6rem 1.2rem;">💰 Leftover History</button>
+                    <button class="neu-btn report-sub-tab-btn" data-sub-tab="budget" style="padding: 0.6rem 1.2rem;">📈 Budget Comparison</button>
                 </div>
 
                 <!-- Detailed Report Panel -->
@@ -779,6 +780,31 @@
                         </div>
                     </div>
                 </div> <!-- End Leftover History Panel -->
+
+                <!-- Budget Comparison Panel -->
+                <div id="report-budget-panel" class="report-panel" style="display: none;">
+                    <div class="neu-flat" style="padding: 1.5rem; margin-bottom: 2rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                            <h3 style="color: var(--text-heading); font-size: 1.2rem; margin: 0;">Budget Comparison (Month-Wise)</h3>
+                        </div>
+                        <div class="report-table-container">
+                            <table class="report-table">
+                                <thead>
+                                    <tr>
+                                        <th>Month</th>
+                                        <th style="text-align: right;">Total Budget (₹)</th>
+                                        <th style="text-align: right;">Total Spent (₹)</th>
+                                        <th style="text-align: right;">Difference (₹)</th>
+                                        <th style="text-align: center;">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="budget-comparison-table-body">
+                                    <!-- Injected via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div> <!-- End Budget Comparison Panel -->
             </div>
 
             <!-- 6. SETTINGS TAB -->
@@ -1073,7 +1099,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-    <script src="app.js?v=8"></script>
+    <script src="app.js?v=9"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {

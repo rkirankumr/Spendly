@@ -2366,6 +2366,8 @@ function setupReportTab() {
 
             if (btn.dataset.subTab === 'leftover') {
                 generateLeftoverHistory();
+            } else if (btn.dataset.subTab === 'budget') {
+                generateBudgetComparison();
             }
         });
     });
@@ -2612,6 +2614,65 @@ async function generateLeftoverHistory() {
             showToast("Leftover history saved!");
         });
     }
+}
+
+function generateBudgetComparison() {
+    const tbody = document.getElementById('budget-comparison-table-body');
+    if (!tbody) return;
+
+    // Get all unique month keys from transactions
+    const monthKeysSet = new Set();
+    transactions.forEach(t => {
+        if (t.type === 'expense') {
+            const dateObj = parseLocalDate(t.date);
+            const key = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}`;
+            monthKeysSet.add(key);
+        }
+    });
+
+    // Also include months where a budget is explicitly defined
+    Object.keys(monthlyCategoryBudgets).forEach(key => monthKeysSet.add(key));
+
+    const monthKeys = Array.from(monthKeysSet).sort((a, b) => b.localeCompare(a)); // Descending order
+
+    if (monthKeys.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 2rem;">No data available yet.</td></tr>`;
+        return;
+    }
+
+    const monthNamesShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    tbody.innerHTML = monthKeys.map(key => {
+        const [yearStr, monthStr] = key.split('-');
+        const year = parseInt(yearStr);
+        const month = parseInt(monthStr) - 1;
+        const displayDate = `${monthNamesShort[month]} ${year}`;
+
+        // Calculate Total Spent
+        const spent = transactions
+            .filter(t => t.type === 'expense' && t.date.startsWith(key))
+            .reduce((sum, t) => sum + t.amount, 0);
+
+        // Calculate Total Budget
+        const budget = getTotalBudget(key);
+
+        const diff = budget - spent;
+        const diffColor = diff < 0 ? 'var(--accent-red)' : 'var(--accent-green)';
+        const diffPrefix = diff < 0 ? '-' : '+';
+        
+        const statusStr = diff < 0 ? '⚠️ Over Budget' : (diff === 0 ? '✅ On Budget' : '👍 Under Budget');
+        const statusColor = diff < 0 ? 'var(--accent-red)' : (diff === 0 ? 'var(--text-muted)' : 'var(--accent-green)');
+
+        return `
+            <tr>
+                <td style="font-weight: 600; color: var(--text-heading);">${displayDate}</td>
+                <td style="text-align: right;">₹${budget.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                <td style="text-align: right;">₹${spent.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                <td style="text-align: right; color: ${diffColor}; font-weight: 600;">${diffPrefix}₹${Math.abs(diff).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                <td style="text-align: center; color: ${statusColor}; font-size: 0.9rem; font-weight: 600;">${statusStr}</td>
+            </tr>
+        `;
+    }).join('');
 }
 
 function exportReportToCSV() {
