@@ -167,6 +167,7 @@ function getLocalDateString() {
 let transactions = [];
 let groceryItems = [];
 let categoryBudgets = {};
+let monthlyCategoryBudgets = {};
 let userName = 'Rojaa';
 let startingBalance = 0;
 let monthlyAddedMoney = {};
@@ -350,12 +351,42 @@ async function loadState() {
     transactions = await DataService.getAll('transactions');
     groceryItems = await DataService.getAll('groceryItems');
     categoryBudgets = await DataService.getSetting('categoryBudgets', {});
+    monthlyCategoryBudgets = await DataService.getSetting('monthlyCategoryBudgets', {});
     userName = await DataService.getSetting('userName', 'Rojaa');
     startingBalance = await DataService.getSetting('startingBalance', 0);
     monthlyAddedMoney = await DataService.getSetting('monthlyAddedMoney', {});
 
     const customCats = await DataService.getSetting('customCategories', {});
     categoryIcons = { ...categoryIcons, ...customCats };
+}
+
+function getCategoryBudget(monthKey, cat) {
+    // 1. Check if we have a budget explicitly set for this month
+    if (monthlyCategoryBudgets[monthKey] && monthlyCategoryBudgets[monthKey][cat] !== undefined) {
+        return monthlyCategoryBudgets[monthKey][cat];
+    }
+    // 2. Option A (Copy-forward): Find the closest past month that has this category budget set
+    const pastMonths = Object.keys(monthlyCategoryBudgets)
+        .filter(m => m < monthKey && monthlyCategoryBudgets[m][cat] !== undefined)
+        .sort((a, b) => b.localeCompare(a)); // sort descending
+        
+    if (pastMonths.length > 0) {
+        return monthlyCategoryBudgets[pastMonths[0]][cat];
+    }
+    // 3. Fallback to old global setting if it exists
+    if (categoryBudgets && categoryBudgets[cat] !== undefined) {
+        return categoryBudgets[cat];
+    }
+    return 0;
+}
+
+function getTotalBudget(monthKey) {
+    const categories = Object.keys(categoryIcons);
+    let total = 0;
+    categories.forEach(cat => {
+        total += getCategoryBudget(monthKey, cat);
+    });
+    return total;
 }
 
 function applyTimeTheme() {
@@ -601,8 +632,17 @@ function setupForms() {
         const cat = document.getElementById('budget-category').value;
         const amount = parseFloat(document.getElementById('cat-budget-amount').value);
         if (cat && !isNaN(amount) && amount >= 0) {
+            const currentMonthKey = `${selectedYear}-${String(selectedMonth + 1).padStart(2, '0')}`;
+            if (!monthlyCategoryBudgets[currentMonthKey]) {
+                monthlyCategoryBudgets[currentMonthKey] = {};
+            }
+            monthlyCategoryBudgets[currentMonthKey][cat] = amount;
+            await DataService.saveSetting('monthlyCategoryBudgets', monthlyCategoryBudgets);
+            
+            // Also update legacy global budget as a fallback
             categoryBudgets[cat] = amount;
             await DataService.saveSetting('categoryBudgets', categoryBudgets);
+            
             updateUI();
         }
         e.target.reset();
@@ -960,9 +1000,12 @@ function setupSettings() {
                 milkTracker: await DataService.getAll('milkTracker'),
                 settings: {
                     categoryBudgets: await DataService.getSetting('categoryBudgets', {}),
+                    monthlyCategoryBudgets: await DataService.getSetting('monthlyCategoryBudgets', {}),
                     userName: await DataService.getSetting('userName', 'Rojaa'),
                     startingBalance: await DataService.getSetting('startingBalance', 0),
-                    customCategories: await DataService.getSetting('customCategories', {})
+                    customCategories: await DataService.getSetting('customCategories', {}),
+                    monthlyAddedMoney: await DataService.getSetting('monthlyAddedMoney', {}),
+                    playfulTheme: await DataService.getSetting('playfulTheme', false)
                 }
             };
 
@@ -1090,9 +1133,12 @@ function setupSettings() {
                         // Restore Settings
                         if (data.settings) {
                             if (data.settings.categoryBudgets) await DataService.saveSetting('categoryBudgets', data.settings.categoryBudgets);
+                            if (data.settings.monthlyCategoryBudgets) await DataService.saveSetting('monthlyCategoryBudgets', data.settings.monthlyCategoryBudgets);
                             if (data.settings.userName) await DataService.saveSetting('userName', data.settings.userName);
                             if (data.settings.startingBalance !== undefined) await DataService.saveSetting('startingBalance', data.settings.startingBalance);
                             if (data.settings.customCategories) await DataService.saveSetting('customCategories', data.settings.customCategories);
+                            if (data.settings.monthlyAddedMoney) await DataService.saveSetting('monthlyAddedMoney', data.settings.monthlyAddedMoney);
+                            if (data.settings.playfulTheme !== undefined) await DataService.saveSetting('playfulTheme', data.settings.playfulTheme);
                         }
 
                         alert('Data successfully imported! The app will now reload.');
@@ -1308,13 +1354,13 @@ function calculateRollingLeftovers() {
         }
     });
 
-    const monthlyBudget = Object.values(categoryBudgets).reduce((sum, val) => sum + val, 0);
     const keys = Object.keys(monthlyData).sort((a, b) => a.localeCompare(b)); // Ascending
 
     let carryOver = startingBalance;
     const history = {};
 
     keys.forEach(key => {
+        const monthlyBudget = getTotalBudget(key);
         const data = monthlyData[key];
         const limitOrIncome = data.inc > 0 ? data.inc : monthlyBudget;
         
@@ -1390,7 +1436,8 @@ function updateUI() {
     });
 
     // Calculate Total Monthly Budget
-    const monthlyBudget = Object.values(categoryBudgets).reduce((sum, val) => sum + val, 0);
+    const currentMonthKey = `${selectedYear}-${String(selectedMonth + 1).padStart(2, '0')}`;
+    const monthlyBudget = getTotalBudget(currentMonthKey);
     const effectiveBudget = monthlyBudget;
 
     // Header Updates
@@ -1446,13 +1493,13 @@ function updateUI() {
     document.getElementById('total-budget-sum').textContent = `₹${monthlyBudget.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
 
     const catBudgetList = document.getElementById('category-budget-list');
-    const categoriesToRender = Object.keys(categoryIcons).filter(cat => categoryBudgets[cat] > 0 || spentPerCategory[cat] > 0);
+    const categoriesToRender = Object.keys(categoryIcons).filter(cat => getCategoryBudget(currentMonthKey, cat) > 0 || spentPerCategory[cat] > 0);
 
     if (categoriesToRender.length === 0) {
         catBudgetList.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 2rem;">No budgets or spending yet.</div>`;
     } else {
         catBudgetList.innerHTML = categoriesToRender.map(cat => {
-            const budgetAmt = categoryBudgets[cat] || 0;
+            const budgetAmt = getCategoryBudget(currentMonthKey, cat) || 0;
             const spentAmt = spentPerCategory[cat] || 0;
             const percentage = budgetAmt > 0 ? Math.min((spentAmt / budgetAmt) * 100, 100) : (spentAmt > 0 ? 100 : 0);
 
@@ -1757,7 +1804,8 @@ function updateCharts(currentMonthExp, previousMonthNet = 0) {
         }
     });
 
-    const monthlyBudget = Object.values(categoryBudgets).reduce((sum, val) => sum + val, 0);
+    const currentMonthKey = `${selectedYear}-${String(selectedMonth + 1).padStart(2, '0')}`;
+    const monthlyBudget = getTotalBudget(currentMonthKey);
     const effectiveBudget = monthlyBudget;
     const utilization = effectiveBudget > 0 ? (currentMonthExp / effectiveBudget) * 100 : 0;
 
@@ -2837,7 +2885,7 @@ async function syncWithFirebase() {
         }
 
         // 4. Settings
-        const settingsKeys = ['categoryBudgets', 'userName', 'startingBalance', 'customCategories'];
+        const settingsKeys = ['categoryBudgets', 'monthlyCategoryBudgets', 'userName', 'startingBalance', 'customCategories', 'monthlyAddedMoney', 'playfulTheme'];
         for (const key of settingsKeys) {
             const docSnap = await dbRef.collection('users').doc(uid).collection('settings').doc(key).get();
             const localVal = await DataService.getSettingRaw(key);
@@ -2845,7 +2893,7 @@ async function syncWithFirebase() {
             if (docSnap.exists) {
                 const cloudVal = docSnap.data().value;
                 let mergedVal = cloudVal;
-                if (key === 'categoryBudgets' || key === 'customCategories') {
+                if (key === 'categoryBudgets' || key === 'customCategories' || key === 'monthlyCategoryBudgets' || key === 'monthlyAddedMoney') {
                     mergedVal = { ...(localVal || {}), ...(cloudVal || {}) };
                 } else if (key === 'startingBalance') {
                     mergedVal = cloudVal !== undefined ? cloudVal : localVal || 0;
