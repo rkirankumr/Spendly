@@ -1254,7 +1254,10 @@ function renderGroceryList() {
     });
 
     const totalPages = Math.ceil(groceryItems.length / ITEMS_PER_PAGE);
-    const currentPage = paginationState['grocery-list'];
+    if (paginationState['grocery-list'] > totalPages && totalPages > 0) {
+        paginationState['grocery-list'] = totalPages;
+    }
+    const currentPage = paginationState['grocery-list'] || 1;
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     const paginatedItems = groceryItems.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
@@ -1593,6 +1596,9 @@ function renderList(elementId, items, showActions = true) {
     }
 
     const totalPages = Math.ceil(items.length / ITEMS_PER_PAGE);
+    if (paginationState[elementId] > totalPages) {
+        paginationState[elementId] = totalPages;
+    }
     const currentPage = paginationState[elementId];
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     const paginatedItems = items.slice(startIndex, startIndex + ITEMS_PER_PAGE);
