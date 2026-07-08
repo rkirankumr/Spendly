@@ -582,6 +582,22 @@ function setupForms() {
     document.getElementById('exp-date').value = todayStr;
     document.getElementById('inc-date').value = todayStr;
 
+    const expTxnType = document.getElementById('exp-txn-type');
+    const expCard = document.getElementById('exp-card');
+    if (expTxnType && expCard) {
+        expTxnType.addEventListener('change', (e) => {
+            const val = e.target.value;
+            if (val === 'Debit Card' || val === 'Credit Card') {
+                expCard.disabled = false;
+                expCard.required = true;
+            } else {
+                expCard.disabled = true;
+                expCard.required = false;
+                expCard.value = '';
+            }
+        });
+    }
+
     // Expense Form
     document.getElementById('expense-form').addEventListener('submit', (e) => {
         e.preventDefault();
@@ -589,7 +605,9 @@ function setupForms() {
             date: document.getElementById('exp-date').value,
             category: document.getElementById('exp-category').value,
             note: document.getElementById('exp-note').value,
-            amount: parseFloat(document.getElementById('exp-amount').value)
+            amount: parseFloat(document.getElementById('exp-amount').value),
+            txnType: document.getElementById('exp-txn-type') ? document.getElementById('exp-txn-type').value : null,
+            card: document.getElementById('exp-card') ? document.getElementById('exp-card').value : null
         };
         if (editTransactionId) {
             updateTransaction(editTransactionId, 'expense', data);
@@ -709,6 +727,11 @@ function resetForm(type) {
         document.getElementById('expense-form').reset();
         document.getElementById('exp-date').value = todayStr;
         document.querySelector('#expense-form .submit-btn').textContent = 'Add Expense';
+        const expCard = document.getElementById('exp-card');
+        if (expCard) {
+            expCard.disabled = true;
+            expCard.required = false;
+        }
     } else {
         document.getElementById('income-form').reset();
         document.getElementById('inc-date').value = todayStr;
@@ -760,6 +783,21 @@ window.editItem = function (id) {
         document.getElementById('exp-category').value = tx.category;
         document.getElementById('exp-note').value = tx.note || '';
         document.getElementById('exp-amount').value = tx.amount;
+        
+        if (document.getElementById('exp-txn-type')) {
+            document.getElementById('exp-txn-type').value = tx.txnType || 'UPI';
+            const expCard = document.getElementById('exp-card');
+            if (tx.txnType === 'Debit Card' || tx.txnType === 'Credit Card') {
+                expCard.disabled = false;
+                expCard.required = true;
+                expCard.value = tx.card || '';
+            } else {
+                expCard.disabled = true;
+                expCard.required = false;
+                expCard.value = '';
+            }
+        }
+        
         document.querySelector('#expense-form .submit-btn').textContent = 'Update Expense';
     } else {
         document.getElementById('inc-date').value = tx.date;
@@ -1565,13 +1603,18 @@ function renderList(elementId, items, showActions = true) {
         const sign = isExp ? '-' : '+';
         const amountClass = isExp ? 'expense' : 'income';
 
+        let metaHtml = '';
+        if (isExp && item.txnType) {
+            metaHtml = `<br><span style="font-size: 0.7rem; color: var(--accent-teal); opacity: 0.8;">${item.txnType}${item.card ? ' - ' + item.card : ''}</span>`;
+        }
+
         return `
         <div class="transaction-item neu-flat" data-id="${item.id}" style="padding: 8px 12px; margin-bottom: 8px;">
             <div class="tx-left" style="gap: 8px;">
                 <div class="tx-icon" style="color: ${isExp ? 'var(--accent-teal)' : 'var(--accent-green)'}; width: 26px; height: 26px; font-size: 0.9rem; min-width: 26px;">${icon}</div>
                 <div class="tx-details">
                     <span class="tx-title" style="font-size: 0.9rem; line-height: 1;">${item.category}</span>
-                    <span class="tx-date" style="font-size: 0.75rem;">${formatDate(item.date)} ${item.note ? `• ${item.note}` : ''}</span>
+                    <span class="tx-date" style="font-size: 0.75rem;">${formatDate(item.date)} ${item.note ? `• ${item.note}` : ''}${metaHtml}</span>
                 </div>
             </div>
             <div class="tx-right" style="gap: 8px;">

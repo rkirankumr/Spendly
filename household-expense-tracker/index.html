@@ -243,6 +243,25 @@
                                 <input type="text" id="exp-note" class="neu-pressed" placeholder="Optional">
                             </div>
                             <div class="form-group">
+                                <label>Transaction Type</label>
+                                <select id="exp-txn-type" class="neu-pressed" required>
+                                    <option value="Cash">Cash</option>
+                                    <option value="UPI" selected>UPI</option>
+                                    <option value="Debit Card">Debit Card</option>
+                                    <option value="Credit Card">Credit Card</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Select Card</label>
+                                <select id="exp-card" class="neu-pressed" disabled>
+                                    <option value="" disabled selected>Select a card</option>
+                                    <option value="SBI">SBI</option>
+                                    <option value="HDFC">HDFC</option>
+                                    <option value="ICICI">ICICI</option>
+                                    <option value="Axis">Axis</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
                                 <label>Amount (₹)</label>
                                 <input type="number" id="exp-amount" class="neu-pressed" required step="0.01">
                             </div>
