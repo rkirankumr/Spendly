@@ -582,6 +582,16 @@ function setupForms() {
     document.getElementById('exp-date').value = todayStr;
     document.getElementById('inc-date').value = todayStr;
 
+    const ccAlertBtn = document.getElementById('cc-alert-btn');
+    if (ccAlertBtn) {
+        ccAlertBtn.addEventListener('click', () => {
+            const ccTotal = transactions
+                .filter(t => t.type === 'expense' && t.txnType === 'Credit Card')
+                .reduce((sum, t) => sum + t.amount, 0);
+            alert(`Total amount paid through Credit Card: ₹${ccTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`);
+        });
+    }
+
     const expTxnType = document.getElementById('exp-txn-type');
     const expCard = document.getElementById('exp-card');
     if (expTxnType && expCard) {
