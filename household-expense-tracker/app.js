@@ -2588,6 +2588,11 @@ function generateReport() {
     document.getElementById('report-count').textContent = count;
     document.getElementById('report-max-amount').textContent = `₹${maxAmount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
 
+    const tableTotalEl = document.getElementById('report-table-total');
+    if (tableTotalEl) {
+        tableTotalEl.textContent = `₹${totalSum.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+    }
+
     // Render Table Body
     const tbody = document.getElementById('report-table-body');
     if (!tbody) return;
