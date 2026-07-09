@@ -583,12 +583,20 @@ function setupForms() {
     document.getElementById('inc-date').value = todayStr;
 
     const ccAlertBtn = document.getElementById('cc-alert-btn');
-    if (ccAlertBtn) {
+    const ccAlertModal = document.getElementById('cc-alert-modal');
+    const ccAlertAmount = document.getElementById('cc-alert-amount');
+    const ccAlertCloseBtn = document.getElementById('cc-alert-close-btn');
+
+    if (ccAlertBtn && ccAlertModal && ccAlertAmount && ccAlertCloseBtn) {
         ccAlertBtn.addEventListener('click', () => {
             const ccTotal = transactions
                 .filter(t => t.type === 'expense' && t.txnType === 'Credit Card')
                 .reduce((sum, t) => sum + t.amount, 0);
-            alert(`Total amount paid through Credit Card: ₹${ccTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`);
+            ccAlertAmount.textContent = `₹${ccTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+            ccAlertModal.style.display = 'flex';
+        });
+        ccAlertCloseBtn.addEventListener('click', () => {
+            ccAlertModal.style.display = 'none';
         });
     }
 
