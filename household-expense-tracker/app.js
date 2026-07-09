@@ -2486,6 +2486,8 @@ function setupReportTab() {
         startInput.value = formatDateLocal(firstDay);
         endInput.value = formatDateLocal(today);
         document.getElementById('report-category-select').value = 'ALL';
+        const txnTypeSelect = document.getElementById('report-txn-type-select');
+        if (txnTypeSelect) txnTypeSelect.value = 'ALL';
         presetBtns.forEach(b => b.classList.remove('active'));
         if (thisMonthPreset) {
             thisMonthPreset.classList.add('active');
@@ -2531,6 +2533,8 @@ function generateReport() {
     const startVal = document.getElementById('report-start-date').value;
     const endVal = document.getElementById('report-end-date').value;
     const catVal = document.getElementById('report-category-select').value;
+    const txnTypeEl = document.getElementById('report-txn-type-select');
+    const txnTypeVal = txnTypeEl ? txnTypeEl.value : 'ALL';
 
     const startDate = startVal ? new Date(startVal + 'T00:00:00') : null;
     const endDate = endVal ? new Date(endVal + 'T23:59:59') : null;
@@ -2553,6 +2557,10 @@ function generateReport() {
 
     if (catVal !== 'ALL') {
         filtered = filtered.filter(t => t.category === catVal);
+    }
+
+    if (txnTypeVal !== 'ALL') {
+        filtered = filtered.filter(t => t.txnType === txnTypeVal);
     }
 
     // Sort report chronologically
