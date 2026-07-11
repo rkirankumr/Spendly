@@ -171,6 +171,7 @@ let monthlyCategoryBudgets = {};
 let userName = 'Rojaa';
 let startingBalance = 0;
 let monthlyAddedMoney = {};
+let ccPayments = {};
 let editTransactionId = null;
 let tabBeforeEdit = null;
 
@@ -355,6 +356,7 @@ async function loadState() {
     userName = await DataService.getSetting('userName', 'Rojaa');
     startingBalance = await DataService.getSetting('startingBalance', 0);
     monthlyAddedMoney = await DataService.getSetting('monthlyAddedMoney', {});
+    ccPayments = await DataService.getSetting('ccPayments', {});
 
     const customCats = await DataService.getSetting('customCategories', {});
     categoryIcons = { ...categoryIcons, ...customCats };
@@ -585,18 +587,42 @@ function setupForms() {
     const ccAlertBtn = document.getElementById('cc-alert-btn');
     const ccAlertModal = document.getElementById('cc-alert-modal');
     const ccAlertAmount = document.getElementById('cc-alert-amount');
+    const ccAlertTotal = document.getElementById('cc-alert-total');
+    const ccAlertPaid = document.getElementById('cc-alert-paid');
     const ccAlertCloseBtn = document.getElementById('cc-alert-close-btn');
 
     if (ccAlertBtn && ccAlertModal && ccAlertAmount && ccAlertCloseBtn) {
         ccAlertBtn.addEventListener('click', () => {
-            const ccTotal = transactions
+            const ccTotalSpent = transactions
                 .filter(t => t.type === 'expense' && t.txnType === 'Credit Card')
                 .reduce((sum, t) => sum + t.amount, 0);
-            ccAlertAmount.textContent = `₹${ccTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+            
+            const ccTotalPaid = Object.values(ccPayments).reduce((sum, amt) => sum + amt, 0);
+            const ccRemaining = ccTotalSpent - ccTotalPaid;
+
+            if (ccAlertTotal) ccAlertTotal.textContent = `₹${ccTotalSpent.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+            if (ccAlertPaid) ccAlertPaid.textContent = `₹${ccTotalPaid.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+            ccAlertAmount.textContent = `₹${ccRemaining.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+            
+            ccAlertAmount.style.color = ccRemaining > 0 ? 'var(--accent-red)' : 'var(--accent-green)';
             ccAlertModal.style.display = 'flex';
         });
         ccAlertCloseBtn.addEventListener('click', () => {
             ccAlertModal.style.display = 'none';
+        });
+    }
+
+    const saveCcPaymentsBtn = document.getElementById('save-cc-payments-btn');
+    if (saveCcPaymentsBtn) {
+        saveCcPaymentsBtn.addEventListener('click', async () => {
+            const inputs = document.querySelectorAll('.cc-payment-input');
+            inputs.forEach(input => {
+                const month = input.dataset.month;
+                const paid = parseFloat(input.value) || 0;
+                ccPayments[month] = paid;
+            });
+            await DataService.saveSetting('ccPayments', ccPayments);
+            showToast('Credit card payments saved!');
         });
     }
 
@@ -2776,7 +2802,7 @@ function generateCCReport() {
     const monthKeys = Object.keys(monthlyTotals).sort((a, b) => b.localeCompare(a)); // Descending order
 
     if (monthKeys.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="2" style="text-align: center; color: var(--text-muted); padding: 2rem;">No credit card expenses found.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 2rem;">No credit card expenses found.</td></tr>`;
         return;
     }
 
@@ -2785,14 +2811,37 @@ function generateCCReport() {
     tbody.innerHTML = monthKeys.map(key => {
         const data = monthlyTotals[key];
         const displayDate = `${monthNamesShort[data.month]} ${data.year}`;
+        const paidAmount = ccPayments[key] || 0;
+        const remaining = data.amount - paidAmount;
         
         return `
             <tr>
                 <td style="font-weight: 600; color: var(--text-heading);">${displayDate}</td>
-                <td style="text-align: right; color: var(--accent-red); font-weight: 700;">₹${data.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                <td style="text-align: right; color: var(--text-heading); font-weight: 700;">₹${data.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
+                <td style="text-align: right;">
+                    <input type="number" step="0.01" class="neu-pressed cc-payment-input" data-month="${key}" value="${paidAmount}" style="width: 100px; padding: 0.4rem; border: none; text-align: right; border-radius: var(--radius-sm); outline: none;">
+                </td>
+                <td style="text-align: right; color: ${remaining > 0 ? 'var(--accent-red)' : 'var(--accent-green)'}; font-weight: 700;" class="cc-remaining-cell" data-month="${key}" data-total="${data.amount}">
+                    ₹${remaining.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                </td>
             </tr>
         `;
     }).join('');
+
+    // Add listeners to update remaining balance on the fly
+    document.querySelectorAll('.cc-payment-input').forEach(input => {
+        input.addEventListener('input', (e) => {
+            const key = e.target.dataset.month;
+            const paid = parseFloat(e.target.value) || 0;
+            const remainingCell = document.querySelector(`.cc-remaining-cell[data-month="${key}"]`);
+            if (remainingCell) {
+                const total = parseFloat(remainingCell.dataset.total);
+                const remaining = total - paid;
+                remainingCell.textContent = `₹${remaining.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+                remainingCell.style.color = remaining > 0 ? 'var(--accent-red)' : 'var(--accent-green)';
+            }
+        });
+    });
 }
 
 function exportReportToCSV() {

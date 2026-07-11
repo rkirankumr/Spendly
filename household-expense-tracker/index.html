@@ -851,13 +851,18 @@
                     <div class="neu-flat" style="padding: 1.5rem; margin-bottom: 2rem;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
                             <h3 style="color: var(--text-heading); font-size: 1.2rem; margin: 0;">Credit Card Amount to be Paid (Month-Wise)</h3>
+                            <button id="save-cc-payments-btn" class="neu-btn primary" style="padding: 0.6rem 1.2rem; font-size: 0.9rem;">
+                                💾 Save Payments
+                            </button>
                         </div>
                         <div class="report-table-container">
                             <table class="report-table">
                                 <thead>
                                     <tr>
                                         <th>Month</th>
-                                        <th style="text-align: right;">Total Paid by CC (₹)</th>
+                                        <th style="text-align: right;">Total Spent (₹)</th>
+                                        <th style="text-align: right;">Amount Paid (₹)</th>
+                                        <th style="text-align: right;">Remaining (₹)</th>
                                     </tr>
                                 </thead>
                                 <tbody id="cc-report-table-body">
@@ -1166,9 +1171,10 @@
         <div class="neu-flat" style="background: var(--bg-color); padding: 2.5rem; border-radius: var(--radius-lg); text-align: center; max-width: 90%; width: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
             <div style="font-size: 3rem; margin-bottom: 1rem;">💳</div>
             <h2 style="color: var(--text-heading); margin-bottom: 1rem;">Credit Card Alert</h2>
-            <p style="color: var(--text-main); font-size: 1.1rem; margin-bottom: 1.5rem;">
-                Total amount paid through Credit Card:
-                <strong id="cc-alert-amount" style="color: red; font-size: 2.2rem; display: block; margin-top: 0.8rem; font-weight: bold;">₹0.00</strong>
+            <p style="color: var(--text-main); font-size: 1.1rem; margin-bottom: 1.5rem; text-align: left; display: flex; flex-direction: column; gap: 0.5rem; width: 100%;">
+                <span style="display: flex; justify-content: space-between;">Total Spent: <span id="cc-alert-total" style="font-weight: 600;">₹0.00</span></span>
+                <span style="display: flex; justify-content: space-between;">Total Paid: <span id="cc-alert-paid" style="font-weight: 600;">₹0.00</span></span>
+                <span style="display: flex; justify-content: space-between; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid rgba(163,177,198,0.3); font-weight: 800;">Remaining: <span id="cc-alert-amount" style="color: red; font-size: 1.6rem;">₹0.00</span></span>
             </p>
             <button id="cc-alert-close-btn" class="neu-btn primary" style="padding: 0.8rem 2.5rem; font-size: 1.1rem; font-weight: bold;">Close</button>
         </div>
