@@ -2435,6 +2435,8 @@ function setupReportTab() {
                 generateLeftoverHistory();
             } else if (btn.dataset.subTab === 'budget') {
                 generateBudgetComparison();
+            } else if (btn.dataset.subTab === 'cc-report') {
+                generateCCReport();
             }
         });
     });
@@ -2750,6 +2752,44 @@ function generateBudgetComparison() {
                 <td style="text-align: right;">₹${spent.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
                 <td style="text-align: right; color: ${diffColor}; font-weight: 600;">${diffPrefix}₹${Math.abs(diff).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
                 <td style="text-align: center; color: ${statusColor}; font-size: 0.9rem; font-weight: 600;">${statusStr}</td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function generateCCReport() {
+    const tbody = document.getElementById('cc-report-table-body');
+    if (!tbody) return;
+
+    const monthlyTotals = {};
+    transactions.forEach(t => {
+        if (t.type === 'expense' && t.txnType === 'Credit Card') {
+            const dateObj = parseLocalDate(t.date);
+            const key = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}`;
+            if (!monthlyTotals[key]) {
+                monthlyTotals[key] = { amount: 0, year: dateObj.getFullYear(), month: dateObj.getMonth() };
+            }
+            monthlyTotals[key].amount += t.amount;
+        }
+    });
+
+    const monthKeys = Object.keys(monthlyTotals).sort((a, b) => b.localeCompare(a)); // Descending order
+
+    if (monthKeys.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="2" style="text-align: center; color: var(--text-muted); padding: 2rem;">No credit card expenses found.</td></tr>`;
+        return;
+    }
+
+    const monthNamesShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    tbody.innerHTML = monthKeys.map(key => {
+        const data = monthlyTotals[key];
+        const displayDate = `${monthNamesShort[data.month]} ${data.year}`;
+        
+        return `
+            <tr>
+                <td style="font-weight: 600; color: var(--text-heading);">${displayDate}</td>
+                <td style="text-align: right; color: var(--accent-red); font-weight: 700;">₹${data.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}</td>
             </tr>
         `;
     }).join('');

@@ -671,7 +671,8 @@
                 <div class="report-sub-tabs" style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-shrink: 0;">
                     <button class="neu-btn active report-sub-tab-btn" data-sub-tab="detailed" style="padding: 0.6rem 1.2rem;">📋 Detailed Report</button>
                     <button class="neu-btn report-sub-tab-btn" data-sub-tab="leftover" style="padding: 0.6rem 1.2rem;">💰 Leftover History</button>
-                    <button class="neu-btn report-sub-tab-btn" data-sub-tab="budget" style="padding: 0.6rem 1.2rem;">📈 Budget Comparison</button>
+                    <button class="neu-btn report-sub-tab-btn" data-sub-tab="budget" style="padding: 0.6rem 1.2rem;">🎯 Budget Comparison</button>
+                    <button class="neu-btn report-sub-tab-btn" data-sub-tab="cc-report" style="padding: 0.6rem 1.2rem;">💳 Credit Card Report</button>
                 </div>
 
                 <!-- Detailed Report Panel -->
@@ -844,6 +845,28 @@
                         </div>
                     </div>
                 </div> <!-- End Budget Comparison Panel -->
+
+                <!-- Credit Card Report Panel -->
+                <div id="report-cc-report-panel" class="report-panel" style="display: none;">
+                    <div class="neu-flat" style="padding: 1.5rem; margin-bottom: 2rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                            <h3 style="color: var(--text-heading); font-size: 1.2rem; margin: 0;">Credit Card Amount to be Paid (Month-Wise)</h3>
+                        </div>
+                        <div class="report-table-container">
+                            <table class="report-table">
+                                <thead>
+                                    <tr>
+                                        <th>Month</th>
+                                        <th style="text-align: right;">Total Paid by CC (₹)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="cc-report-table-body">
+                                    <!-- Injected via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div> <!-- End Credit Card Report Panel -->
             </div>
 
             <!-- 6. SETTINGS TAB -->
